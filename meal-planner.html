@@ -1,0 +1,2639 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dinner Planner</title>
+<meta name="application-name" content="Dinner Planner">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Dinner Planner">
+<meta name="theme-color" content="#F2A7C3">
+<meta name="mobile-web-app-capable" content="yes">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%23F2A7C3'/><text y='.85em' font-size='72' text-anchor='middle' x='50'>🌿</text></svg>">
+<link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%23F2A7C3'/><text y='.85em' font-size='72' text-anchor='middle' x='50'>🌿</text></svg>">
+<link rel="manifest" href="data:application/json,{&quot;name&quot;:&quot;Dinner Planner&quot;,&quot;short_name&quot;:&quot;Dinner Planner&quot;,&quot;start_url&quot;:&quot;.&quot;,&quot;display&quot;:&quot;standalone&quot;,&quot;background_color&quot;:&quot;%23F2A7C3&quot;,&quot;theme_color&quot;:&quot;%23F2A7C3&quot;,&quot;icons&quot;:[{&quot;src&quot;:&quot;data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%23F2A7C3'/><text y='.85em' font-size='72' text-anchor='middle' x='50'>🌿</text></svg>&quot;,&quot;sizes&quot;:&quot;any&quot;,&quot;type&quot;:&quot;image/svg+xml&quot;}]}">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap');
+
+  :root {
+    --bg: #F2A7C3;
+    --bg2: #E8859E;
+    --surface: #FDEEF5;
+    --surface2: #F9D8E8;
+    --teal: #1BA8A0;
+    --teal-dark: #137D76;
+    --teal-light: #C2EFED;
+    --teal-bg: #E0F7F6;
+    --purple: #6B3FA0;
+    --purple-light: #E8D9F7;
+    --yellow: #FFD600;
+    --yellow-dark: #B89A00;
+    --orange: #FF6B35;
+    --orange-light: #FFE8DF;
+    --text: #1A0A2E;
+    --text2: #4A2060;
+    --text3: #8B5C9E;
+    --border: #C060A0;
+    --border2: #A03070;
+    --white: #FDEEF5;
+    --radius: 12px;
+    --radius-sm: 8px;
+    --radius-pill: 99px;
+    --shadow: 4px 4px 0px #A03070;
+    --shadow-teal: 4px 4px 0px #137D76;
+    --shadow-sm: 2px 2px 0px #A03070;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Nunito', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: var(--bg);
+    background-image:
+      radial-gradient(circle at 15% 20%, rgba(255,214,0,0.15) 0%, transparent 40%),
+      radial-gradient(circle at 85% 80%, rgba(107,63,160,0.12) 0%, transparent 40%);
+    color: var(--text);
+    min-height: 100vh;
+    font-size: 15px;
+    line-height: 1.5;
+  }
+
+  .page {
+    max-width: 840px;
+    margin: 0 auto;
+    padding: 2rem 1.25rem 4rem;
+  }
+
+  @media (max-width: 600px) {
+    .page { padding: 1.25rem .85rem 4rem; }
+    .night-grid { grid-template-columns: 1fr 1fr; gap: 8px; }
+    header h1 { font-size: 24px; }
+  }
+
+  @media (max-width: 420px) {
+    .night-grid { grid-template-columns: 1fr; }
+  }
+
+  header {
+    margin-bottom: 2rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 3px solid var(--border2);
+  }
+
+  header h1 {
+    font-size: 28px;
+    font-weight: 900;
+    letter-spacing: -.01em;
+    color: var(--text);
+    text-shadow: 2px 2px 0px var(--yellow);
+    margin-bottom: 3px;
+  }
+
+  header p {
+    font-size: 13px;
+    color: var(--text2);
+    font-weight: 600;
+  }
+
+  .settings-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--teal-dark);
+    background: var(--teal-light);
+    border: 2px solid var(--teal);
+    border-radius: var(--radius-sm);
+    padding: 6px 12px;
+    cursor: pointer;
+    font-family: inherit;
+    box-shadow: var(--shadow-teal);
+    transition: transform .1s;
+  }
+  .settings-toggle:hover { transform: translate(-1px, -1px); box-shadow: 5px 5px 0px var(--teal-dark); }
+  .settings-toggle:active { transform: translate(2px, 2px); box-shadow: 2px 2px 0px var(--teal-dark); }
+
+  .settings-card {
+    background: var(--surface);
+    border: 3px solid var(--border2);
+    border-radius: var(--radius);
+    margin-bottom: 1.25rem;
+    overflow: hidden;
+    box-shadow: var(--shadow);
+  }
+
+  .settings-section {
+    padding: 1.1rem 1.25rem;
+    border-bottom: 2px solid var(--surface2);
+  }
+
+  .api-bar { display: flex; gap: 8px; margin-bottom: 6px; }
+
+  .api-bar input {
+    flex: 1;
+    font-size: 13px;
+    padding: 7px 10px;
+    border: 2px solid var(--border);
+    border-radius: var(--radius-sm);
+    background: var(--white);
+    color: var(--text);
+    font-family: monospace;
+  }
+  .api-bar input:focus { outline: none; border-color: var(--teal); }
+
+  .api-note { font-size: 11px; color: var(--text3); line-height: 1.5; font-weight: 600; }
+  .api-note a { color: var(--teal-dark); }
+
+  .seasonal-toggle-btn {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--teal-dark);
+    background: var(--teal-light);
+    border: 2px solid var(--teal);
+    border-radius: var(--radius-pill);
+    padding: 4px 12px;
+    cursor: pointer;
+    font-family: inherit;
+    box-shadow: 2px 2px 0px var(--teal-dark);
+  }
+  .seasonal-toggle-btn:hover { background: var(--teal); color: #fff; }
+
+  .seasonal-panel {
+    background: var(--teal-bg);
+    border: 2px solid var(--teal);
+    border-radius: var(--radius-sm);
+    padding: 12px 14px;
+    margin-bottom: 12px;
+  }
+
+  .seasonal-panel .sp-label {
+    font-size: 11px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: .08em;
+    color: var(--teal-dark);
+    margin-bottom: 8px;
+  }
+
+  .seasonal-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+
+  .seasonal-chip {
+    font-size: 12px;
+    font-weight: 700;
+    padding: 3px 10px;
+    border-radius: var(--radius-pill);
+    background: var(--white);
+    border: 2px solid var(--teal);
+    color: var(--teal-dark);
+    cursor: pointer;
+  }
+  .seasonal-chip:hover { background: var(--teal); color: #fff; }
+  .seasonal-chip.in-list { background: var(--teal); color: #fff; border-color: var(--teal-dark); }
+
+  .seasonal-loading { font-size: 13px; color: var(--teal-dark); font-style: italic; font-weight: 600; }
+
+  .card {
+    background: var(--surface);
+    border: 3px solid var(--border2);
+    border-radius: var(--radius);
+    padding: 1.25rem;
+    margin-bottom: 1rem;
+    box-shadow: var(--shadow);
+  }
+
+  .section-label {
+    font-size: 11px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: .09em;
+    color: var(--purple);
+    margin-bottom: 10px;
+  }
+
+  .section-sub {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: none;
+    letter-spacing: 0;
+    color: var(--text3);
+    margin-left: 4px;
+  }
+
+  .chip-row { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 10px; }
+
+  .chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 5px 13px;
+    border-radius: var(--radius-pill);
+    border: 2px solid var(--border);
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    background: var(--white);
+    color: var(--text2);
+    user-select: none;
+    box-shadow: 2px 2px 0px var(--border);
+    transition: transform .1s, box-shadow .1s;
+  }
+  .chip:hover { transform: translate(-1px,-1px); box-shadow: 3px 3px 0px var(--border2); }
+  .chip.sel-veg { background: var(--teal); border-color: var(--teal-dark); color: #fff; box-shadow: 2px 2px 0px var(--teal-dark); }
+  .chip.sel-meat { background: #FFE566; border-color: #B89A00; color: #5A4A00; box-shadow: 2px 2px 0px #B89A00; }
+  .chip.sel-fish { background: #D9C5F7; border-color: #8B5CE0; color: #4A1D96; box-shadow: 2px 2px 0px #6B3FA0; }
+
+  .chip .rm { font-size: 10px; opacity: .7; cursor: pointer; line-height: 1; padding: 1px; }
+  .chip .rm:hover { opacity: 1; }
+
+  .add-row { display: flex; gap: 8px; margin-top: 4px; }
+
+  .add-row input, .restriction-add-row input {
+    flex: 1;
+    font-size: 13px;
+    font-family: inherit;
+    font-weight: 600;
+    padding: 7px 11px;
+    border: 2px solid var(--border);
+    border-radius: var(--radius-sm);
+    background: var(--white);
+    color: var(--text);
+  }
+  .add-row input:focus, .restriction-add-row input:focus { outline: none; border-color: var(--teal); }
+
+  .btn {
+    padding: 7px 15px;
+    border-radius: var(--radius-sm);
+    border: 2px solid var(--border2);
+    background: var(--white);
+    color: var(--text2);
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    white-space: nowrap;
+    font-family: inherit;
+    box-shadow: var(--shadow-sm);
+    transition: transform .1s, box-shadow .1s;
+  }
+  .btn:hover { transform: translate(-1px,-1px); box-shadow: 3px 3px 0px var(--border2); }
+  .btn:active { transform: translate(2px,2px); box-shadow: none; }
+
+  .btn-primary {
+    background: var(--teal);
+    color: #fff;
+    border-color: var(--teal-dark);
+    box-shadow: 2px 2px 0px var(--teal-dark);
+  }
+  .btn-primary:hover { background: var(--teal-dark); box-shadow: 3px 3px 0px #0A5550; }
+
+  .toggle-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--text2);
+    cursor: pointer;
+    user-select: none;
+    margin: .25rem 0 1rem;
+  }
+
+  .toggle-track {
+    width: 38px;
+    height: 22px;
+    border-radius: 99px;
+    background: var(--surface2);
+    border: 2px solid var(--border);
+    position: relative;
+    flex-shrink: 0;
+    transition: background .15s, border-color .15s;
+  }
+  .toggle-track.on { background: var(--teal); border-color: var(--teal-dark); }
+
+  .toggle-knob {
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: #fff;
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    transition: left .15s;
+    box-shadow: 1px 1px 2px rgba(0,0,0,.25);
+  }
+  .toggle-track.on .toggle-knob { left: 18px; }
+
+  .divider { border: none; border-top: 2px dashed var(--border); margin: 1.25rem 0; opacity: .6; }
+
+  .night-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+    gap: 12px;
+    margin-bottom: 1rem;
+  }
+
+  .mcard {
+    background: var(--teal-bg);
+    border: 3px solid var(--teal);
+    border-radius: var(--radius);
+    padding: 13px 14px;
+    cursor: pointer;
+    box-shadow: var(--shadow-teal);
+    transition: transform .1s, box-shadow .1s;
+  }
+  .mcard:hover { transform: translate(-1px,-1px); box-shadow: 5px 5px 0px var(--teal-dark); }
+  .mcard.open { background: var(--white); border-color: var(--teal-dark); }
+
+  .mcard-header { display: flex; justify-content: space-between; align-items: flex-start; gap: 6px; }
+
+  .mday {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: .08em;
+    color: var(--teal-dark);
+    margin-bottom: 4px;
+    font-weight: 800;
+  }
+
+  .mname {
+    font-size: 13px;
+    font-weight: 700;
+    line-height: 1.4;
+    margin-bottom: 8px;
+    color: var(--text);
+  }
+
+  .tags { display: flex; flex-wrap: wrap; gap: 4px; margin-bottom: 6px; }
+
+  .tag {
+    font-size: 10px;
+    padding: 2px 8px;
+    border-radius: 99px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: .04em;
+    border: 1.5px solid;
+  }
+
+  .t-sheet { background: #FFF3C0; color: #7A5500; border-color: #E0B800; }
+  .t-salad { background: var(--teal-bg); color: var(--teal-dark); border-color: var(--teal); }
+  .t-fish { background: var(--purple-light); color: var(--purple); border-color: var(--purple); }
+  .t-quick { background: var(--orange-light); color: #B03010; border-color: var(--orange); }
+  .t-pantry { background: var(--surface2); color: var(--text2); border-color: var(--border); }
+
+  .mtap-hint { font-size: 11px; color: var(--teal-dark); font-weight: 700; font-style: italic; }
+
+  .regen-btn {
+    flex-shrink: 0;
+    padding: 3px 9px;
+    border-radius: var(--radius-sm);
+    border: 2px solid var(--teal);
+    background: var(--white);
+    color: var(--teal-dark);
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    box-shadow: 1px 1px 0px var(--teal-dark);
+  }
+  .regen-btn:hover { background: var(--teal); color: #fff; }
+
+  .ingr-panel { margin-top: 10px; padding-top: 10px; border-top: 2px dashed var(--teal); }
+
+  .ingr-label {
+    font-size: 10px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: .08em;
+    color: var(--purple);
+    margin-bottom: 6px;
+  }
+
+  .ingr-list { list-style: none; display: flex; flex-direction: column; gap: 4px; }
+  .ingr-list li { font-size: 13px; font-weight: 600; color: var(--text); display: flex; align-items: baseline; gap: 7px; }
+  .ingr-list li::before { content: "★"; color: var(--teal); flex-shrink: 0; font-size: 9px; }
+
+  .instr-toggle-row { margin-top: 10px; padding-top: 8px; border-top: 2px dashed var(--teal); }
+
+  .instr-toggle-btn {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--purple);
+    background: var(--purple-light);
+    border: 2px solid var(--purple);
+    border-radius: var(--radius-pill);
+    padding: 3px 11px;
+    cursor: pointer;
+    font-family: inherit;
+    box-shadow: 1px 1px 0px var(--purple);
+  }
+  .instr-toggle-btn:hover { background: var(--purple); color: #fff; }
+
+  .instr-panel { margin-top: 10px; }
+
+  .instr-list { padding-left: 20px; display: flex; flex-direction: column; gap: 7px; }
+  .instr-list li { font-size: 13px; font-weight: 600; color: var(--text); line-height: 1.5; }
+
+  .status { font-size: 13px; font-weight: 700; color: var(--text2); margin-bottom: .75rem; min-height: 20px; }
+  .status.err { color: #A32D2D; }
+
+  .generating-placeholder {
+    background: var(--teal-bg);
+    border: 3px solid var(--teal);
+    border-radius: var(--radius);
+    padding: 13px 14px;
+    animation: pulse 1.4s ease-in-out infinite;
+  }
+
+  @keyframes pulse { 0%,100%{opacity:.5} 50%{opacity:1} }
+
+  .placeholder-day { width: 50px; height: 10px; background: var(--teal-light); border-radius: 4px; margin-bottom: 8px; }
+  .placeholder-line { height: 12px; background: var(--teal-light); border-radius: 4px; margin-bottom: 5px; }
+  .placeholder-line.short { width: 65%; }
+
+  .action-row { display: flex; gap: 8px; flex-wrap: wrap; margin-top: .75rem; }
+
+  .empty-state { font-size: 14px; font-weight: 700; color: var(--text2); font-style: italic; padding: .5rem 0; }
+
+  .restriction-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 0;
+    border-bottom: 2px solid var(--surface2);
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text);
+  }
+  .restriction-item:last-of-type { border-bottom: none; }
+
+  .restriction-rm {
+    flex-shrink: 0;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: var(--radius-sm);
+    border: 2px solid var(--border);
+    background: var(--white);
+    color: var(--text2);
+    cursor: pointer;
+  }
+  .restriction-rm:hover { background: #FCEBEB; color: #A32D2D; border-color: #F09595; }
+
+  .restriction-add-row { display: flex; gap: 8px; margin-top: 10px; }
+
+  .onhand-panel {
+    background: #F0FAFA;
+    border: 2px solid var(--teal);
+    border-radius: var(--radius-sm);
+    padding: 12px 14px;
+    margin-bottom: .75rem;
+    box-shadow: 2px 2px 0px var(--teal-dark);
+  }
+
+  .onhand-hint { font-size: 12px; font-weight: 600; color: var(--teal-dark); margin-bottom: 10px; line-height: 1.5; }
+
+  .onhand-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text);
+    padding: 5px 0;
+    border-bottom: 1px solid var(--teal-light);
+  }
+  .onhand-item:last-of-type { border-bottom: none; }
+
+  .onhand-rm {
+    flex-shrink: 0;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 2px 7px;
+    border-radius: var(--radius-sm);
+    border: 2px solid var(--teal);
+    background: var(--white);
+    color: var(--teal-dark);
+    cursor: pointer;
+  }
+  .onhand-rm:hover { background: var(--teal); color: #fff; }
+
+  .shopping-section-label {
+    font-size: 11px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: .08em;
+    color: var(--purple);
+    margin: 1rem 0 8px;
+  }
+  .shopping-section-label:first-child { margin-top: 0; }
+
+  .shopping-list { list-style: none; display: flex; flex-direction: column; gap: 2px; margin-bottom: .5rem; }
+
+  .shopping-list li {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text);
+    padding: 5px 0;
+    border-bottom: 1px solid var(--surface2);
+    cursor: pointer;
+    user-select: none;
+  }
+  .shopping-list li:last-child { border-bottom: none; }
+  .shopping-list li.checked { color: var(--text3); text-decoration: line-through; }
+
+  .shopping-list li::before {
+    content: '';
+    width: 16px;
+    height: 16px;
+    border: 2px solid var(--border);
+    border-radius: 4px;
+    flex-shrink: 0;
+    background: var(--white);
+  }
+  .shopping-list li.checked::before {
+    background: var(--teal);
+    border-color: var(--teal-dark);
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 10 10'%3E%3Cpath d='M2 5l2.5 2.5L8 3' stroke='white' stroke-width='1.8' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: center;
+  }
+
+  .shopping-loading { font-size: 13px; font-weight: 700; color: var(--text2); font-style: italic; padding: .5rem 0; }
+  .pantry-note { font-size: 12px; font-weight: 600; color: var(--text3); margin-bottom: 4px; line-height: 1.5; }
+
+  .request-input-row { display: flex; gap: 8px; margin-bottom: 1rem; }
+
+  .request-input-row input {
+    flex: 1;
+    font-size: 14px;
+    font-weight: 600;
+    font-family: inherit;
+    padding: 9px 13px;
+    border: 2px solid var(--border);
+    border-radius: var(--radius-sm);
+    background: var(--white);
+    color: var(--text);
+  }
+  .request-input-row input:focus { outline: none; border-color: var(--teal); }
+
+  .request-cards { display: flex; flex-direction: column; gap: 10px; }
+
+  .request-card {
+    background: var(--white);
+    border: 3px solid var(--border2);
+    border-radius: var(--radius);
+    padding: 13px 15px;
+    box-shadow: var(--shadow-sm);
+  }
+
+  .request-card-header { display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; margin-bottom: 6px; }
+
+  .request-craving {
+    font-size: 10px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: .08em;
+    color: var(--text3);
+    margin-bottom: 3px;
+  }
+
+  .request-name { font-size: 14px; font-weight: 700; color: var(--text); line-height: 1.4; margin-bottom: 6px; }
+  .request-desc { font-size: 13px; font-weight: 600; color: var(--text2); line-height: 1.5; margin-bottom: 8px; }
+  .request-ingr-label { font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: .07em; color: var(--purple); margin-bottom: 5px; }
+  .request-loading { font-size: 13px; font-weight: 700; color: var(--text2); font-style: italic; padding: .5rem 0; }
+
+  .remove-request {
+    flex-shrink: 0;
+    padding: 3px 8px;
+    border-radius: var(--radius-sm);
+    border: 2px solid var(--border);
+    background: var(--white);
+    color: var(--text2);
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+  }
+  .remove-request:hover { background: #FCEBEB; color: #A32D2D; border-color: #F09595; }
+
+  .pantry-suggest-card {
+    background: var(--white);
+    border: 3px solid var(--yellow-dark);
+    border-radius: var(--radius);
+    padding: 14px 16px;
+    box-shadow: 3px 3px 0px var(--yellow-dark);
+  }
+  .pantry-suggest-name { font-size: 15px; font-weight: 800; color: var(--text); margin-bottom: 5px; line-height: 1.4; }
+  .pantry-suggest-desc { font-size: 13px; font-weight: 600; color: var(--text2); line-height: 1.55; margin-bottom: 10px; }
+  .pantry-suggest-extra { font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: .07em; color: var(--yellow-dark); margin-bottom: 4px; }
+  .pantry-suggest-extra-item {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text);
+    background: #FFF3C0;
+    border: 2px solid var(--yellow-dark);
+    border-radius: var(--radius-sm);
+    padding: 4px 10px;
+    display: inline-block;
+  }
+  .pantry-suggest-instr { margin-top: 10px; padding-top: 10px; border-top: 2px dashed var(--yellow-dark); }
+
+  footer {
+    margin-top: 3rem;
+    padding-top: 1rem;
+    border-top: 2px dashed var(--border);
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--text2);
+  }
+
+  /* Saved drawer */
+  .saved-drawer {
+    position: fixed;
+    top: 0; right: 0;
+    width: min(320px, 100vw);
+    height: 100vh;
+    height: 100dvh;
+    background: var(--surface);
+    border-left: 3px solid var(--border2);
+    box-shadow: -4px 0 0 var(--border2);
+    transform: translateX(100%);
+    transition: transform .25s ease;
+    z-index: 100;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+  .saved-drawer.open { transform: translateX(0); }
+
+  .saved-drawer-header {
+    padding: 14px 16px;
+    border-bottom: 2px solid var(--surface2);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-shrink: 0;
+    background: var(--bg2);
+  }
+
+  .saved-drawer-header h2 {
+    font-size: 16px;
+    font-weight: 800;
+    color: var(--text);
+  }
+
+  .saved-drawer-actions { display: flex; gap: 6px; align-items: center; }
+
+  .drawer-close-btn {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--text2);
+    background: none;
+    border: none;
+    cursor: pointer;
+    line-height: 1;
+    padding: 2px 6px;
+  }
+  .drawer-close-btn:hover { color: var(--text); }
+
+  .saved-drawer-body {
+    flex: 1;
+    overflow-y: auto;
+    padding: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .saved-drawer-empty {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text3);
+    font-style: italic;
+    text-align: center;
+    padding: 2rem 1rem;
+  }
+
+  .saved-meal-card {
+    background: var(--teal-bg);
+    border: 2px solid var(--teal);
+    border-radius: var(--radius);
+    padding: 10px 12px;
+    box-shadow: 2px 2px 0px var(--teal-dark);
+  }
+
+  .saved-meal-header { display: flex; justify-content: space-between; align-items: flex-start; gap: 6px; margin-bottom: 4px; }
+  .saved-meal-name { font-size: 13px; font-weight: 700; color: var(--text); line-height: 1.4; flex: 1; cursor: pointer; }
+  .saved-meal-name:hover { color: var(--teal-dark); }
+
+  .saved-meal-actions { display: flex; gap: 4px; flex-shrink: 0; }
+
+  .saved-meal-btn {
+    font-size: 11px;
+    font-weight: 700;
+    padding: 2px 7px;
+    border-radius: var(--radius-sm);
+    border: 1.5px solid var(--teal);
+    background: var(--white);
+    color: var(--teal-dark);
+    cursor: pointer;
+  }
+  .saved-meal-btn:hover { background: var(--teal); color: #fff; }
+  .saved-meal-btn.fav { border-color: #B89A00; color: #5A4A00; background: #FFF3C0; }
+  .saved-meal-btn.fav:hover { background: #FFD600; }
+  .saved-meal-btn.remove { border-color: var(--border2); color: var(--text2); background: var(--white); }
+  .saved-meal-btn.remove:hover { background: #FCEBEB; color: #A32D2D; border-color: #F09595; }
+
+  .saved-meal-expand { font-size: 11px; font-weight: 700; color: var(--teal-dark); font-style: italic; cursor: pointer; margin-bottom: 2px; }
+  .saved-meal-expand:hover { text-decoration: underline; }
+
+  .saved-meal-detail { margin-top: 8px; padding-top: 8px; border-top: 1.5px dashed var(--teal); font-size: 12px; }
+
+  /* Floating drawer toggle button */
+  .drawer-toggle-fab {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    z-index: 99;
+    background: var(--teal);
+    color: #fff;
+    border: 3px solid var(--teal-dark);
+    border-radius: var(--radius-pill);
+    padding: 10px 18px;
+    font-size: 13px;
+    font-weight: 800;
+    font-family: inherit;
+    cursor: pointer;
+    box-shadow: 3px 3px 0px var(--teal-dark);
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    transition: transform .1s, box-shadow .1s;
+  }
+  .drawer-toggle-fab:hover { transform: translate(-1px,-1px); box-shadow: 4px 4px 0px var(--teal-dark); }
+  .drawer-toggle-fab .fab-badge {
+    background: #FFD600;
+    color: #5A4A00;
+    border-radius: 99px;
+    font-size: 11px;
+    font-weight: 900;
+    padding: 1px 7px;
+    min-width: 20px;
+    text-align: center;
+  }
+
+  /* Save button on meal cards */
+  .save-meal-btn {
+    font-size: 11px;
+    font-weight: 700;
+    padding: 2px 7px;
+    border-radius: var(--radius-sm);
+    border: 1.5px solid var(--border);
+    background: var(--white);
+    color: var(--text2);
+    cursor: pointer;
+    white-space: nowrap;
+  }
+  .save-meal-btn:hover { background: var(--surface2); color: var(--text); }
+
+  /* Save popover */
+  .save-popover {
+    position: absolute;
+    right: 0; top: 100%;
+    margin-top: 4px;
+    background: var(--white);
+    border: 2px solid var(--border2);
+    border-radius: var(--radius-sm);
+    box-shadow: 3px 3px 0px var(--border2);
+    z-index: 50;
+    min-width: 160px;
+    overflow: hidden;
+  }
+  .save-popover button {
+    display: block;
+    width: 100%;
+    text-align: left;
+    padding: 8px 12px;
+    font-size: 13px;
+    font-weight: 700;
+    font-family: inherit;
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--text);
+  }
+  .save-popover button:hover { background: var(--surface2); }
+  .save-popover button + button { border-top: 1px solid var(--surface2); }
+
+  /* Favorites page */
+  .fav-card {
+    background: var(--white);
+    border: 3px solid #B89A00;
+    border-radius: var(--radius);
+    padding: 13px 15px;
+    box-shadow: 3px 3px 0px #B89A00;
+    margin-bottom: 10px;
+  }
+  .fav-card-header { display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; }
+  .fav-meal-name { font-size: 14px; font-weight: 700; color: var(--text); line-height: 1.4; flex: 1; }
+  .fav-saved-date { font-size: 11px; color: var(--text3); font-weight: 600; margin-top: 2px; }
+  .fav-remove-btn {
+    font-size: 11px; font-weight: 700; padding: 2px 8px;
+    border-radius: var(--radius-sm); border: 1.5px solid var(--border);
+    background: var(--white); color: var(--text2); cursor: pointer;
+  }
+  .fav-remove-btn:hover { background: #FCEBEB; color: #A32D2D; border-color: #F09595; }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <!-- Main view -->
+  <div id="mainView">
+  <header>
+    <div style="display:flex;justify-content:space-between;align-items:center;">
+      <div>
+        <h1>Weekly Dinner Planner</h1>
+        <p>Modular dinners built around anchor ingredients to reduce waste.</p>
+      </div>
+      <div style="position:relative">
+        <button class="settings-toggle" onclick="toggleMainMenu()" id="mainMenuBtn" aria-label="Menu">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+        </button>
+        <div id="mainMenu" style="display:none;position:absolute;right:0;top:calc(100% + 6px);background:var(--surface);border:2px solid var(--border2);border-radius:var(--radius-sm);box-shadow:3px 3px 0px var(--border2);z-index:200;min-width:150px;overflow:hidden;">
+          <button onclick="goToFavorites();closeMainMenu()" style="display:block;width:100%;text-align:left;padding:10px 14px;font-size:13px;font-weight:700;font-family:inherit;background:none;border:none;cursor:pointer;color:var(--text);border-bottom:1px solid var(--surface2);">★ Favorites</button>
+          <button onclick="goToSettings();closeMainMenu()" style="display:block;width:100%;text-align:left;padding:10px 14px;font-size:13px;font-weight:700;font-family:inherit;background:none;border:none;cursor:pointer;color:var(--text);">⚙ Settings</button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <div class="card">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+      <p class="section-label" style="margin-bottom:0">Vegetables</p>
+      <button class="seasonal-toggle-btn" onclick="toggleSeasonal()" id="seasonalToggleBtn">What's in season?</button>
+    </div>
+    <div id="seasonalPanel" style="display:none"></div>
+    <div class="chip-row" id="vegChips"></div>
+    <div class="add-row">
+      <input id="vegInput" placeholder="Add a vegetable..." />
+      <button class="btn" onclick="addItem('veg')">Add</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <p class="section-label">Weeknight meats</p>
+    <div class="chip-row" id="meatChips"></div>
+    <div class="add-row">
+      <input id="meatInput" placeholder="Add a meat..." />
+      <button class="btn" onclick="addItem('meat')">Add</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <p class="section-label">Fish for night 2 <span class="section-sub">(pick 1)</span></p>
+    <div class="chip-row" id="fishChips"></div>
+    <div class="add-row">
+      <input id="fishInput" placeholder="Add a fish..." />
+      <button class="btn" onclick="addItem('fish')">Add</button>
+    </div>
+  </div>
+
+  <div class="toggle-row" onclick="toggleVegNight()">
+    <div class="toggle-track" id="vegTrack"><div class="toggle-knob"></div></div>
+    Include a vegetarian night
+  </div>
+
+  <div class="toggle-row" onclick="toggleOnHand()">
+    <div class="toggle-track" id="onHandTrack"><div class="toggle-knob"></div></div>
+    I have ingredients to use up
+  </div>
+
+  <div id="onHandPanel" style="display:none">
+    <div class="onhand-panel">
+      <p class="onhand-hint">Add anything you have on hand — extra vegetables, a specific bread, condiments, anything. The planner will weave them in where they naturally fit.</p>
+      <div id="onHandList"></div>
+      <div class="add-row" style="margin-top:8px">
+        <input id="onHandInput" placeholder="e.g. sourdough, fig jam, carrots..." />
+        <button class="btn" onclick="addOnHand()">Add</button>
+      </div>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <div id="planArea"></div>
+
+  <div id="requestSection" style="display:none">
+    <hr class="divider">
+    <p class="section-label">Meal requests <span class="section-sub">type a craving and we'll adapt it to your ingredients</span></p>
+    <div class="request-input-row">
+      <input id="requestInput" placeholder="e.g. ramen, tacos, risotto..." />
+      <button class="btn btn-primary" onclick="addMealRequest()">Generate</button>
+    </div>
+    <div class="request-cards" id="requestCards"></div>
+  </div>
+
+  <div id="shoppingSection" style="display:none">
+    <hr class="divider">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+      <p class="section-label" style="margin-bottom:0">Shopping list</p>
+      <div style="display:flex;gap:8px">
+        <button class="btn" onclick="generateShoppingList()">Regenerate</button>
+        <button class="btn" onclick="copyShoppingList()">Copy list</button>
+      </div>
+    </div>
+    <div id="shoppingContent"></div>
+  </div>
+
+  <div id="pantrySuggestSection">
+    <hr class="divider">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+      <p class="section-label" style="margin-bottom:0">Suggest a meal from what I have</p>
+    </div>
+    <p style="font-size:12px;color:var(--text3);margin-bottom:10px;line-height:1.5">Uses only your pantry items and on-hand ingredients. If a complete meal isn't possible, suggests at most one simple extra item to grab.</p>
+    <div style="display:flex;gap:8px;margin-bottom:10px">
+      <input id="pantrySuggestHint" placeholder='e.g. "no pasta", "rice based"...' style="flex:1;font-size:13px;font-weight:600;font-family:inherit;padding:7px 11px;border:2px solid var(--border);border-radius:var(--radius-sm);background:var(--white);color:var(--text);" />
+      <button class="btn btn-primary" id="pantrySuggestBtn" onclick="generatePantrySuggestion()">Suggest</button>
+    </div>
+    <div id="pantrySuggestPastList"></div>
+    <div id="pantrySuggestResult"></div>
+  </div>
+
+  <footer id="mainFooter">
+    <strong>Pantry items:</strong> <span id="pantryFooter"></span>
+  </footer>
+
+
+  <!-- Session saved drawer -->
+  <div class="saved-drawer" id="savedDrawer">
+    <div class="saved-drawer-header">
+      <h2>Saved for now</h2>
+      <div class="saved-drawer-actions">
+        <button class="btn" style="font-size:11px;padding:3px 10px" onclick="clearSessionSaves()">Clear all</button>
+        <button class="drawer-close-btn" onclick="toggleDrawer()">✕</button>
+      </div>
+    </div>
+    <div class="saved-drawer-body" id="savedDrawerBody"></div>
+  </div>
+
+  <!-- FAB -->
+  <button class="drawer-toggle-fab" id="drawerFab" onclick="toggleDrawer()" style="display:none">
+    ★ Saved <span class="fab-badge" id="drawerBadge">0</span>
+  </button>
+  </div><!-- end mainView -->
+
+  <!-- Settings page -->
+  <div id="settingsView" style="display:none">
+    <header>
+      <div style="display:flex;align-items:center;gap:12px;">
+        <button class="settings-toggle" onclick="goToMain()" style="display:inline-flex;align-items:center;gap:5px;">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+          Back
+        </button>
+        <div>
+          <h1>Settings</h1>
+          <p>API key, location, restrictions, and pantry.</p>
+        </div>
+      </div>
+    </header>
+
+    <div class="settings-card">
+      <div class="settings-section">
+        <p class="section-label">Anthropic API key</p>
+        <div class="api-bar">
+          <input type="password" id="apiKey" placeholder="sk-ant-..." autocomplete="off" />
+          <button class="btn" onclick="saveKey()">Save</button>
+        </div>
+        <p class="api-note">Get a key at <a href="https://console.anthropic.com" target="_blank">console.anthropic.com</a>. Stored only in your browser, never sent anywhere except the Anthropic API.</p>
+      </div>
+
+      <div class="settings-section">
+        <p class="section-label">Your state <span class="section-sub">for seasonal produce</span></p>
+        <select id="statePicker" onchange="saveStatePref()" style="font-size:13px;padding:7px 10px;border:1px solid var(--border);border-radius:var(--radius-sm);background:var(--bg);color:var(--text);width:100%;max-width:280px;">
+          <option value="">Select a state...</option>
+          <option value="Alabama">Alabama</option><option value="Alaska">Alaska</option><option value="Arizona">Arizona</option><option value="Arkansas">Arkansas</option><option value="California">California</option><option value="Colorado">Colorado</option><option value="Connecticut">Connecticut</option><option value="Delaware">Delaware</option><option value="Florida">Florida</option><option value="Georgia">Georgia</option><option value="Hawaii">Hawaii</option><option value="Idaho">Idaho</option><option value="Illinois">Illinois</option><option value="Indiana">Indiana</option><option value="Iowa">Iowa</option><option value="Kansas">Kansas</option><option value="Kentucky">Kentucky</option><option value="Louisiana">Louisiana</option><option value="Maine">Maine</option><option value="Maryland">Maryland</option><option value="Massachusetts">Massachusetts</option><option value="Michigan">Michigan</option><option value="Minnesota">Minnesota</option><option value="Mississippi">Mississippi</option><option value="Missouri">Missouri</option><option value="Montana">Montana</option><option value="Nebraska">Nebraska</option><option value="Nevada">Nevada</option><option value="New Hampshire">New Hampshire</option><option value="New Jersey">New Jersey</option><option value="New Mexico">New Mexico</option><option value="New York">New York</option><option value="North Carolina">North Carolina</option><option value="North Dakota">North Dakota</option><option value="Ohio">Ohio</option><option value="Oklahoma">Oklahoma</option><option value="Oregon">Oregon</option><option value="Pennsylvania">Pennsylvania</option><option value="Rhode Island">Rhode Island</option><option value="South Carolina">South Carolina</option><option value="South Dakota">South Dakota</option><option value="Tennessee">Tennessee</option><option value="Texas">Texas</option><option value="Utah">Utah</option><option value="Vermont">Vermont</option><option value="Virginia">Virginia</option><option value="Washington">Washington</option><option value="West Virginia">West Virginia</option><option value="Wisconsin">Wisconsin</option><option value="Wyoming">Wyoming</option>
+        </select>
+      </div>
+
+      <div class="settings-section">
+        <p class="section-label">Dietary restrictions</p>
+        <div id="restrictionsEditor"></div>
+        <div class="restriction-add-row">
+          <input id="newRestrictionInput" placeholder="Add a restriction..." />
+          <button class="btn" onclick="addRestriction()">Add</button>
+        </div>
+      </div>
+
+      <div class="settings-section" style="border-bottom:none">
+        <p class="section-label">Pantry items</p>
+        <p style="font-size:12px;color:var(--text3);margin-bottom:10px;line-height:1.5">These are assumed to always be on hand and appear in the pantry check section of your shopping list.</p>
+        <div id="pantryEditor"></div>
+        <div class="restriction-add-row">
+          <input id="newPantryInput" placeholder="Add a pantry item..." />
+          <button class="btn" onclick="addPantryItem()">Add</button>
+        </div>
+      </div>
+    </div>
+  </div><!-- end settingsView -->
+
+
+  <!-- Favorites page -->
+  <div id="favoritesView" style="display:none">
+    <header>
+      <div style="display:flex;align-items:center;gap:12px;">
+        <button class="settings-toggle" onclick="goToMain()" style="display:inline-flex;align-items:center;gap:5px;">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+          Back
+        </button>
+        <div>
+          <h1>Favorites</h1>
+          <p>Meals you've loved and want to remember.</p>
+        </div>
+      </div>
+      <div style="margin-top:10px">
+        <button class="btn" onclick="clearFavorites()" style="font-size:12px">Clear all favorites</button>
+      </div>
+    </header>
+    <div id="favoritesContent"></div>
+  </div><!-- end favoritesView -->
+
+</div>
+
+<script>
+const SKEY = 'dinner-planner-v1';
+
+function getRestrictionsPrompt() {
+  const list = (state.restrictions || []);
+  if (!list.length) return '';
+  return 'Hard dietary restrictions — never violate these:\n' + list.map(r => '- ' + r).join('\n');
+}
+
+const defaultPantryList = ['olive oil','lemons','garlic','parmesan','canned white beans','pasta','rice','dijon mustard','capers','soy sauce','sesame oil','salt','pepper','crushed red pepper'];
+
+function getPantry() {
+  return (state.pantry && state.pantry.length) ? state.pantry : [...defaultPantryList];
+}
+
+const defaultVegs = ['asparagus','zucchini','green beans','sweet potato','cherry tomatoes','bell pepper','spinach/arugula','broccoli'];
+const defaultMeats = ['chicken thighs','ground turkey','pork tenderloin','beef sirloin'];
+const defaultFish = ['salmon','shrimp','tilapia','cod','halibut'];
+
+const vegSuggestions = {
+  'asparagus': { name: 'Asparagus and white bean pasta', hint: 'Pick up fresh pasta. Saute asparagus with garlic, toss with white beans and pasta, finish with lemon and parmesan.' },
+  'zucchini': { name: 'Zucchini and chickpea saute over rice', hint: 'Pick up a can of chickpeas. Saute zucchini with garlic and cumin, add chickpeas, serve over rice with lemon.' },
+  'green beans': { name: 'Green bean and chickpea salad', hint: 'Pick up canned chickpeas. Blanch green beans, toss with chickpeas, dijon vinaigrette, shallots, and lemon.' },
+  'sweet potato': { name: 'Sweet potato and black bean tacos', hint: 'Pick up a can of black beans and corn tortillas. Roast sweet potato, warm with black beans and cumin, serve with lime.' },
+  'cherry tomatoes': { name: 'Burst tomato and burrata toast', hint: 'Pick up burrata or fresh mozzarella and good bread. Blister tomatoes in olive oil, pile on toast with cheese and basil.' },
+  'bell pepper': { name: 'Bell pepper and chickpea stew', hint: 'Pick up canned chickpeas and smoked paprika. Saute peppers with garlic, add chickpeas and crushed tomatoes, simmer 20 min.' },
+  'spinach/arugula': { name: 'Spinach and white bean pasta', hint: 'Pick up fresh pasta. Wilt spinach with garlic and olive oil, toss with white beans and pasta, finish with parmesan and lemon.' },
+  'broccoli': { name: 'Broccoli and cashew stir fry', hint: 'Pick up cashews and soy sauce. Steam broccoli, stir fry with garlic, ginger, cashews, soy, and sesame oil over rice.' },
+  'default': { name: 'Vegetarian grain bowl', hint: 'Pick up a can of chickpeas. Roast your anchor vegetable, serve over rice or farro with chickpeas, lemon tahini, and fresh herbs.' }
+};
+
+const tagLabel = { sheet: 'sheet pan', salad: 'salad', fish: 'fish', quick: 'quick/pantry', pantry: 'minimal prep' };
+const tagClass = { sheet: 't-sheet', salad: 't-salad', fish: 't-fish', quick: 't-quick', pantry: 't-pantry' };
+
+const defaultRestrictions = [
+  'No nuts except cashews and coconut (no almonds, walnuts, pecans, pine nuts, pistachios, peanuts, hazelnuts, macadamia)',
+  'No blackberries',
+  'No dishes where egg is the defining protein or the dish is named after egg — so no scrambled eggs, fried eggs as a main, frittata, quiche, or egg salad. Dishes that happen to contain egg as a secondary ingredient or binder (like shakshuka, meatballs, or pasta) are completely fine.',
+  'No raw kale',
+  'No roasted broccoli (steamed or blanched broccoli is fine)'
+];
+
+function loadState() {
+  try {
+    const r = localStorage.getItem(SKEY);
+    if (r) {
+      const p = JSON.parse(r);
+      if (!p.selVegs) p.selVegs = [];
+      if (!p.meats) p.meats = [...defaultMeats];
+      if (!p.fish) p.fish = [...defaultFish];
+      if (!p.restrictions) p.restrictions = [...defaultRestrictions];
+      if (!p.requests) p.requests = [];
+      if (!p.onHand) p.onHand = [];
+      if (p.onHandOpen === undefined) p.onHandOpen = false;
+      if (p.vegNightCustom === undefined) p.vegNightCustom = null;
+      if (!p.pantry) p.pantry = [...defaultPantryList];
+      if (!p.selMeats) p.selMeats = p.selMeat ? [p.selMeat] : [];
+      return p;
+    }
+  } catch(e) {}
+  return { vegs: [...defaultVegs], meats: [...defaultMeats], fish: [...defaultFish], selVegs: [], selMeat: null, selMeats: [], selFish: null, vegNight: false, onHandOpen: false, onHand: [], plan: [], customIngr: {}, openCard: null, requests: [], restrictions: [...defaultRestrictions], vegNightCustom: null, pantry: [...defaultPantryList] };
+}
+
+function save() { try { localStorage.setItem(SKEY, JSON.stringify(state)); } catch(e) {} }
+function saveKey() {
+  const k = document.getElementById('apiKey').value.trim();
+  if (k) { localStorage.setItem('anthropic-key', k); showKeyStatus('Saved!'); }
+}
+function loadKey() {
+  const k = localStorage.getItem('anthropic-key') || '';
+  if (k) { const el = document.getElementById('apiKey'); if (el) el.value = k; }
+}
+function getKey() { return (document.getElementById('apiKey') || {}).value?.trim() || localStorage.getItem('anthropic-key') || ''; }
+function showKeyStatus(msg) {
+  const el = document.getElementById('apiKey');
+  if (!el) return;
+  const prev = el.placeholder;
+  el.placeholder = msg;
+  setTimeout(() => { el.placeholder = prev; }, 2000);
+}
+
+function saveStatePref() {
+  const sel = document.getElementById('statePicker');
+  if (sel) { localStorage.setItem('user-state', sel.value); seasonalVegs = null; }
+}
+function loadStatePref() {
+  const val = localStorage.getItem('user-state') || '';
+  const sel = document.getElementById('statePicker');
+  if (sel && val) sel.value = val;
+  return val;
+}
+function getUserState() {
+  return localStorage.getItem('user-state') || (document.getElementById('statePicker') || {}).value || '';
+}
+
+function goToSettings() {
+  document.getElementById('mainView').style.display = 'none';
+  document.getElementById('settingsView').style.display = 'block';
+  loadKey(); loadStatePref(); renderRestrictionsEditor(); renderPantryEditor();
+}
+
+const FAV_KEY = 'dinner-planner-favorites';
+
+// Session saves (in-memory only)
+let sessionSaves = [];
+let openSavedIdx = null;
+let savedInstrIdx = null;
+let savedInstrLoading = false;
+let savedInstrCache = {};
+let savedIngrCache = {};
+let savedIngrLoading = null;
+let openSavePopover = null; // { cardType, idx }
+
+function getSessionSaves() { return sessionSaves; }
+
+function getFavorites() {
+  try { return JSON.parse(localStorage.getItem(FAV_KEY) || '[]'); }
+  catch(e) { return []; }
+}
+
+function saveFavorites(favs) {
+  try { localStorage.setItem(FAV_KEY, JSON.stringify(favs)); } catch(e) {}
+}
+
+function saveToSession(meal) {
+  sessionSaves.push({ id: Date.now(), name: meal.name, tags: meal.tags || [], savedAt: new Date().toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'}) });
+  closeSavePopover();
+  renderDrawer();
+}
+
+async function saveToFavorites(meal) {
+  closeSavePopover();
+  // Show saving state
+  const favId = Date.now();
+  const fav = {
+    id: favId,
+    name: meal.name,
+    tags: meal.tags || [],
+    savedAt: new Date().toLocaleDateString(),
+    desc: meal.desc || null,
+    ingr: null,
+    instr: null,
+    saving: true
+  };
+  // Pre-populate from session save cache if available
+  const sessionId = meal._sessionId || (sessionSaves.find(s => s.name === meal.name) || {}).id || null;
+  const cachedIngr = sessionId ? savedIngrCache[sessionId] : null;
+  const cachedInstr = sessionId ? savedInstrCache[sessionId] : null;
+
+  // Fetch ingredients if not cached — use what was passed in meal object first
+  let ingr = meal.ingr || (cachedIngr ? { used: Array.isArray(cachedIngr) ? cachedIngr : (cachedIngr.used||[]), extra: cachedIngr.extra||null } : null);
+  let instr = meal.instr || cachedInstr || null;
+
+  // Also check pantry suggestion cache
+  if (!ingr && pantrySuggestData && pantrySuggestData.name === meal.name && pantrySuggestIngr) {
+    ingr = pantrySuggestIngr.used ? [...(pantrySuggestIngr.used || []), ...(pantrySuggestIngr.extra ? ['★ ' + pantrySuggestIngr.extra] : [])] : null;
+  }
+  if (!instr && pantrySuggestData && pantrySuggestData.name === meal.name && pantrySuggestInstr) {
+    instr = pantrySuggestInstr;
+  }
+
+  // Push placeholder immediately so user sees feedback
+  const favs = getFavorites();
+  favs.unshift(fav);
+  saveFavorites(favs);
+  if (typeof renderFavoritesPage === 'function' && document.getElementById('favoritesView')?.style.display !== 'none') renderFavoritesPage();
+
+  // Fetch what's missing
+  try {
+    if (!ingr) {
+      const ingrPrompt = `For this dinner: "${meal.name}"
+Pantry staples always on hand: ${getPantry().join(', ')}.
+Also already on hand: ${(state.onHandOpen && state.onHand && state.onHand.length) ? state.onHand.join(', ') : 'nothing extra'}.
+Return two lists as JSON: {"used": ["ingredients from pantry/on-hand used in this meal"], "extra": "one extra ingredient needed or null"}
+No markdown, raw JSON only.`;
+      const raw = await callAPI([{ role: 'user', content: ingrPrompt }], 200);
+      const parsed = JSON.parse(raw.replace(/```json|```/g,'').trim());
+      ingr = { used: parsed.used || [], extra: parsed.extra || null };
+    } else if (Array.isArray(ingr)) {
+      ingr = { used: ingr, extra: null };
+    }
+
+    if (!instr) {
+      const instrPrompt = `Write quick cooking instructions for: "${meal.name}" (serves 2).
+${ingr && ingr.used ? 'Ingredients: ' + [...(ingr.used||[]), ...(ingr.extra?[ingr.extra]:[])].join(', ') + '. Only reference these.' : ''}
+4-6 steps, one concise sentence each with time where relevant. No intro, no outro. Number each step.`;
+      const text = await callAPI([{ role: 'user', content: instrPrompt }], 300);
+      instr = text.trim().split('\n').map(l => l.replace(/^\d+[.)]\s*/, '').trim()).filter(l => l.length > 2);
+    }
+  } catch(e) {
+    instr = instr || ['Could not load instructions.'];
+    ingr = ingr || { used: [], extra: null };
+  }
+
+  // Update the saved favorite with full data
+  const updatedFavs = getFavorites().map(f => f.id === favId ? { ...f, ingr, instr, saving: false } : f);
+  saveFavorites(updatedFavs);
+  if (typeof renderFavoritesPage === 'function' && document.getElementById('favoritesView')?.style.display !== 'none') renderFavoritesPage();
+  renderDrawer();
+}
+
+async function saveToFavoritesFromSession(id) {
+  const item = sessionSaves.find(s => s.id === id);
+  if (!item) return;
+  // Build ingr in the right format
+  const cachedIngr = savedIngrCache[id];
+  const cachedInstr = savedInstrCache[id] || null;
+  const ingr = cachedIngr ? { used: Array.isArray(cachedIngr) ? cachedIngr : (cachedIngr.used || []), extra: cachedIngr.extra || null } : null;
+  const meal = {
+    name: item.name,
+    tags: item.tags,
+    desc: null,
+    _sessionId: id, // pass id so saveToFavorites can find the cache directly
+    ingr,
+    instr: cachedInstr
+  };
+  await saveToFavorites(meal);
+}
+
+function removeSessionSave(id) {
+  sessionSaves = sessionSaves.filter(s => s.id !== id);
+  delete savedInstrCache[id]; delete savedIngrCache[id];
+  if (openSavedIdx === id) openSavedIdx = null;
+  renderDrawer();
+}
+
+function clearSessionSaves() {
+  sessionSaves = []; openSavedIdx = null; savedInstrCache = {}; savedIngrCache = {};
+  renderDrawer();
+}
+
+function removeFavorite(id) {
+  const favs = getFavorites().filter(f => f.id !== id);
+  saveFavorites(favs);
+  renderFavoritesPage();
+}
+
+function clearFavorites() {
+  saveFavorites([]);
+  renderFavoritesPage();
+}
+
+function toggleDrawer() {
+  const drawer = document.getElementById('savedDrawer');
+  if (drawer) drawer.classList.toggle('open');
+}
+
+function openSavePopoverFor(cardType, idx, btnEl) {
+  // If already open for same card, close it
+  if (openSavePopover && openSavePopover.cardType === cardType && openSavePopover.idx === idx) {
+    closeSavePopover(); return;
+  }
+  closeSavePopover();
+  openSavePopover = { cardType, idx };
+  // Get meal object
+  const meal = getMealForCard(cardType, idx);
+  if (!meal) return;
+  // Create popover
+  const pop = document.createElement('div');
+  pop.className = 'save-popover'; pop.id = 'savePopover';
+  pop.innerHTML = `
+    <button onclick="saveToSession(${JSON.stringify(meal).replace(/"/g,'&quot;')})">Save for now</button>
+    <button onclick="saveToFavorites(${JSON.stringify(meal).replace(/"/g,'&quot;')})">★ Save as favorite</button>
+  `;
+  const parent = btnEl.parentElement;
+  parent.style.position = 'relative';
+  parent.appendChild(pop);
+  setTimeout(() => document.addEventListener('click', outsidePopoverClick), 0);
+}
+
+function getMealForCard(cardType, idx) {
+  if (cardType === 'plan') return state.plan[idx] || null;
+  if (cardType === 'veg') {
+    const s = state.vegNightCustom || vegSuggestions[state.selVegs[0]] || vegSuggestions['default'];
+    return { name: s.name, tags: ['veg'] };
+  }
+  if (cardType === 'req') {
+    const req = (state.requests || []).find(r => r.id === idx);
+    return req ? { name: req.name, tags: [] } : null;
+  }
+  if (cardType === 'pantry') return pantrySuggestData ? { name: pantrySuggestData.name, tags: ['pantry'] } : null;
+  return null;
+}
+
+function closeSavePopover() {
+  const pop = document.getElementById('savePopover');
+  if (pop) pop.remove();
+  openSavePopover = null;
+  document.removeEventListener('click', outsidePopoverClick);
+}
+
+function outsidePopoverClick(e) {
+  const pop = document.getElementById('savePopover');
+  if (pop && !pop.contains(e.target)) closeSavePopover();
+}
+
+function toggleSavedMeal(id) {
+  openSavedIdx = openSavedIdx === id ? null : id;
+  renderDrawer();
+  if (openSavedIdx === id && savedIngrCache[id] === undefined) loadSavedIngr(id);
+}
+
+async function loadSavedIngr(id) {
+  savedIngrLoading = id; renderDrawer();
+  const meal = sessionSaves.find(s => s.id === id);
+  if (!meal) { savedIngrLoading = null; return; }
+  const prompt = `For this dinner: "${meal.name}"
+Pantry staples always on hand: ${getPantry().join(', ')}.
+Also already on hand: ${(state.onHandOpen && state.onHand && state.onHand.length) ? state.onHand.join(', ') : 'nothing extra'}.
+List ONLY ingredients NOT in either of the above lists that are needed to buy. 3 to 6 items max. One per line. No quantities. No bullets. Just ingredient names.`;
+  try {
+    const text = await callAPI([{ role: 'user', content: prompt }], 150);
+    savedIngrCache[id] = text.trim().split('\n').map(l => l.replace(/^[-•*\d.]+\s*/, '')).filter(l => l.length > 1);
+  } catch(e) { savedIngrCache[id] = ['Could not load']; }
+  savedIngrLoading = null; renderDrawer();
+}
+
+async function loadSavedInstr(id) {
+  savedInstrLoading = id; renderDrawer();
+  const meal = sessionSaves.find(s => s.id === id);
+  if (!meal) { savedInstrLoading = null; return; }
+  const prompt = `Write quick cooking instructions for: "${meal.name}" (serves 2). 4-6 steps, one concise sentence each with time where relevant. No intro, no outro, no ingredient list. Number each step.`;
+  try {
+    const text = await callAPI([{ role: 'user', content: prompt }], 300);
+    savedInstrCache[id] = text.trim().split('\n').map(l => l.replace(/^\d+[\.\)]\s*/, '').trim()).filter(l => l.length > 2);
+  } catch(e) { savedInstrCache[id] = ['Could not load']; }
+  savedInstrLoading = null; renderDrawer();
+}
+
+function toggleSavedInstr(id) {
+  savedInstrIdx = savedInstrIdx === id ? null : id;
+  renderDrawer();
+  if (savedInstrIdx === id && savedInstrCache[id] === undefined) loadSavedInstr(id);
+}
+
+function renderDrawer() {
+  const body = document.getElementById('savedDrawerBody');
+  const fab = document.getElementById('drawerFab');
+  const badge = document.getElementById('drawerBadge');
+  if (!body) return;
+  const count = sessionSaves.length;
+  if (fab) fab.style.display = count > 0 ? 'flex' : 'none';
+  if (badge) badge.textContent = count;
+  if (count === 0) { body.innerHTML = '<p class="saved-drawer-empty">Nothing saved yet this session.<br>Hit the bookmark on any meal to save it here.</p>'; return; }
+  body.innerHTML = sessionSaves.map(s => {
+    const isOpen = openSavedIdx === s.id;
+    const ingr = savedIngrCache[s.id];
+    const ingrLoading = savedIngrLoading === s.id;
+    const instrOpen = savedInstrIdx === s.id;
+    const instrLoading = savedInstrLoading === s.id;
+    const instr = savedInstrCache[s.id];
+    return `<div class="saved-meal-card">
+      <div class="saved-meal-header">
+        <div style="flex:1;min-width:0">
+          <p class="saved-meal-name" onclick="toggleSavedMeal(${s.id})">${s.name}</p>
+          <p style="font-size:10px;color:var(--teal-dark);font-weight:700">saved at ${s.savedAt}</p>
+        </div>
+        <div class="saved-meal-actions">
+          <button class="saved-meal-btn fav" onclick="saveToFavoritesFromSession(${s.id})" title="Save as favorite">★</button>
+          <button class="saved-meal-btn remove" onclick="removeSessionSave(${s.id})">✕</button>
+        </div>
+      </div>
+      <p class="saved-meal-expand" onclick="toggleSavedMeal(${s.id})">${isOpen ? 'hide details ▲' : 'ingredients + instructions ▼'}</p>
+      ${isOpen ? `<div class="saved-meal-detail">
+        <p style="font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.07em;color:var(--purple);margin-bottom:4px">Extra to buy</p>
+        ${ingrLoading ? '<p style="font-size:12px;color:var(--text3);font-style:italic">Loading...</p>'
+          : ingr && ingr.length ? `<ul class="ingr-list" style="font-size:12px">${ingr.map(i=>`<li>${i}</li>`).join('')}</ul>` : ''}
+        <div style="margin-top:8px">
+          <button class="instr-toggle-btn" style="font-size:11px;padding:2px 9px" onclick="toggleSavedInstr(${s.id})">${instrOpen ? 'Hide instructions' : 'Show instructions'}</button>
+        </div>
+        ${instrOpen ? `<div class="instr-panel">${instrLoading ? '<p style="font-size:12px;color:var(--text3);font-style:italic">Loading...</p>' : instr && instr.length ? `<ol class="instr-list" style="font-size:12px">${instr.map(st=>`<li>${st}</li>`).join('')}</ol>` : ''}</div>` : ''}
+      </div>` : ''}
+    </div>`;
+  }).join('');
+}
+
+function toggleMainMenu() {
+  const menu = document.getElementById('mainMenu');
+  if (!menu) return;
+  const isOpen = menu.style.display !== 'none';
+  if (isOpen) { closeMainMenu(); }
+  else {
+    menu.style.display = 'block';
+    setTimeout(() => document.addEventListener('click', outsideMenuClick), 0);
+  }
+}
+
+function closeMainMenu() {
+  const menu = document.getElementById('mainMenu');
+  if (menu) menu.style.display = 'none';
+  document.removeEventListener('click', outsideMenuClick);
+}
+
+function outsideMenuClick(e) {
+  const menu = document.getElementById('mainMenu');
+  const btn = document.getElementById('mainMenuBtn');
+  if (menu && !menu.contains(e.target) && btn && !btn.contains(e.target)) closeMainMenu();
+}
+
+function goToFavorites() {
+  document.getElementById('mainView').style.display = 'none';
+  document.getElementById('settingsView').style.display = 'none';
+  document.getElementById('favoritesView').style.display = 'block';
+  renderFavoritesPage();
+}
+
+let openFavIdx = null;
+let openFavInstrIdx = null;
+
+function toggleFavCard(id) {
+  openFavIdx = openFavIdx === id ? null : id;
+  openFavInstrIdx = null;
+  renderFavoritesPage();
+}
+
+function toggleFavInstr(id) {
+  openFavInstrIdx = openFavInstrIdx === id ? null : id;
+  renderFavoritesPage();
+}
+
+function renderFavoritesPage() {
+  const el = document.getElementById('favoritesContent');
+  if (!el) return;
+  const favs = getFavorites();
+  if (!favs.length) { el.innerHTML = '<p style="font-size:14px;color:var(--text2);font-style:italic;font-weight:600;padding:1rem 0">No favorites saved yet. Hit ★ Save as favorite on any meal to keep it here.</p>'; return; }
+  el.innerHTML = favs.map(f => {
+    const isOpen = openFavIdx === f.id;
+    const instrOpen = openFavInstrIdx === f.id;
+    const ingr = f.ingr;
+    const instr = f.instr;
+    return `<div class="fav-card">
+      <div class="fav-card-header">
+        <div style="flex:1;min-width:0;cursor:pointer" onclick="toggleFavCard(${f.id})">
+          <p class="fav-meal-name">${f.name}</p>
+          <p class="fav-saved-date">Saved ${f.savedAt}</p>
+          ${f.saving ? '<p style="font-size:11px;font-weight:700;color:var(--teal-dark)">Saving details...</p>' : ''}
+        </div>
+        <div style="display:flex;gap:6px;flex-shrink:0;align-items:flex-start">
+          <button class="fav-remove-btn" onclick="removeFavorite(${f.id})">Remove</button>
+          <span style="font-size:12px;color:var(--text3);font-weight:700;padding-top:2px;cursor:pointer" onclick="toggleFavCard(${f.id})">${isOpen ? '▲' : '▼'}</span>
+        </div>
+      </div>
+      ${isOpen && !f.saving ? `<div style="margin-top:10px;padding-top:10px;border-top:2px dashed #B89A00">
+        ${ingr && ingr.used && ingr.used.length ? `
+          <p class="ingr-label" style="margin-bottom:6px">From your pantry</p>
+          <ul class="ingr-list" style="margin-bottom:${ingr.extra ? '10px' : '0'}">${ingr.used.map(i => `<li>${i}</li>`).join('')}</ul>
+          ${ingr.extra ? `<p class="pantry-suggest-extra" style="margin-top:6px">One to grab</p><span class="pantry-suggest-extra-item">${ingr.extra}</span>` : '<p style="font-size:12px;font-weight:600;color:var(--teal-dark);margin-top:4px">✓ No extra shopping needed</p>'}
+        ` : ''}
+        ${instr && instr.length ? `
+          <div style="margin-top:10px">
+            <button class="instr-toggle-btn" onclick="toggleFavInstr(${f.id})">${instrOpen ? 'Hide instructions' : 'Show instructions'}</button>
+            ${instrOpen ? `<ol class="instr-list" style="margin-top:8px">${instr.map(s => `<li>${s}</li>`).join('')}</ol>` : ''}
+          </div>
+        ` : ''}
+      </div>` : ''}
+    </div>`;
+  }).join('');
+}
+
+function goToMain() {
+  document.getElementById('settingsView').style.display = 'none';
+  document.getElementById('favoritesView').style.display = 'none';
+  document.getElementById('mainView').style.display = 'block';
+  renderPantryFooter();
+}
+
+let editingRestrictionIdx = null;
+
+function renderRestrictionsEditor() {
+  const el = document.getElementById('restrictionsEditor');
+  if (!el) return;
+  const list = state.restrictions || [];
+  if (!list.length) { el.innerHTML = '<p style="font-size:13px;color:var(--text3);font-style:italic;padding:4px 0">No restrictions set.</p>'; return; }
+  el.innerHTML = list.map((r, i) => {
+    if (editingRestrictionIdx === i) {
+      return `<div class="restriction-item" style="flex-direction:column;align-items:stretch;gap:6px">
+        <textarea id="editRestriction${i}" style="font-size:13px;font-family:inherit;font-weight:600;padding:7px 10px;border:2px solid var(--teal);border-radius:var(--radius-sm);background:var(--white);color:var(--text);resize:vertical;width:100%;min-height:60px">${r}</textarea>
+        <div style="display:flex;gap:6px">
+          <button class="restriction-rm" style="border-color:var(--teal);color:var(--teal-dark)" onclick="saveRestrictionEdit(${i})">Save</button>
+          <button class="restriction-rm" onclick="cancelRestrictionEdit()">Cancel</button>
+        </div>
+      </div>`;
+    }
+    return `<div class="restriction-item">
+      <span style="flex:1">${r}</span>
+      <button class="restriction-rm" style="border-color:var(--teal);color:var(--teal-dark);margin-right:4px" onclick="editRestriction(${i})">Edit</button>
+      <button class="restriction-rm" onclick="removeRestriction(${i})">Remove</button>
+    </div>`;
+  }).join('');
+  if (editingRestrictionIdx !== null) {
+    const ta = document.getElementById(`editRestriction${editingRestrictionIdx}`);
+    if (ta) { ta.focus(); ta.setSelectionRange(ta.value.length, ta.value.length); }
+  }
+}
+
+function editRestriction(idx) {
+  editingRestrictionIdx = idx;
+  renderRestrictionsEditor();
+}
+
+function saveRestrictionEdit(idx) {
+  const ta = document.getElementById(`editRestriction${idx}`);
+  const val = ta ? ta.value.trim() : '';
+  if (val) state.restrictions[idx] = val;
+  editingRestrictionIdx = null;
+  save(); renderRestrictionsEditor();
+}
+
+function cancelRestrictionEdit() {
+  editingRestrictionIdx = null;
+  renderRestrictionsEditor();
+}
+
+function renderPantryEditor() {
+  const el = document.getElementById('pantryEditor');
+  if (!el) return;
+  const list = getPantry();
+  el.innerHTML = list.length ? list.map((r, i) => `<div class="restriction-item">
+    <span style="flex:1">${r}</span>
+    <button class="restriction-rm" onclick="removePantryItem(${i})">Remove</button>
+  </div>`).join('') : '<p style="font-size:13px;color:var(--text3);font-style:italic;padding:4px 0">No pantry items.</p>';
+}
+
+function renderPantryFooter() {
+  const el = document.getElementById('pantryFooter');
+  if (el) el.textContent = getPantry().join(', ');
+}
+
+function addPantryItem() {
+  const inp = document.getElementById('newPantryInput');
+  const val = inp ? inp.value.trim().toLowerCase() : '';
+  if (!val) return;
+  state.pantry = getPantry();
+  removeFuzzyMatch(state.pantry, val);
+  state.pantry.push(val);
+  inp.value = '';
+  save(); renderPantryEditor(); renderPantryFooter();
+}
+
+function removePantryItem(idx) {
+  state.pantry = getPantry();
+  state.pantry.splice(idx, 1);
+  save(); renderPantryEditor(); renderPantryFooter();
+}
+
+function addRestriction() {
+  const inp = document.getElementById('newRestrictionInput');
+  const val = inp ? inp.value.trim() : '';
+  if (!val) return;
+  state.restrictions = state.restrictions || [];
+  state.restrictions.push(val);
+  inp.value = '';
+  save(); renderRestrictionsEditor();
+}
+
+function removeRestriction(idx) {
+  state.restrictions.splice(idx, 1);
+  save(); renderRestrictionsEditor();
+}
+
+let seasonalOpen = false;
+let seasonalVegs = null;
+let seasonalLoading = false;
+
+function toggleSeasonal() {
+  seasonalOpen = !seasonalOpen;
+  const panel = document.getElementById('seasonalPanel');
+  if (!panel) return;
+  panel.style.display = seasonalOpen ? 'block' : 'none';
+  const btn = document.getElementById('seasonalToggleBtn');
+  if (btn) btn.textContent = seasonalOpen ? 'Hide' : "What's in season?";
+  if (seasonalOpen && !seasonalVegs) loadSeasonalVegs();
+  else if (seasonalOpen) renderSeasonalPanel();
+}
+
+async function loadSeasonalVegs() {
+  const userState = getUserState();
+  if (!userState) {
+    const panel = document.getElementById('seasonalPanel');
+    if (panel) panel.innerHTML = '<div class="seasonal-panel"><p class="seasonal-loading">Open Settings and pick your state first.</p></div>';
+    return;
+  }
+  const month = new Date().toLocaleString('default', { month: 'long' });
+  seasonalLoading = true;
+  renderSeasonalPanel();
+  const prompt = `List vegetables and herbs that are in peak season in ${userState} during ${month}. Include only produce that is genuinely at its best this time of year — things you'd find fresh at a farmers market right now. Focus on vegetables suitable for home weeknight cooking.
+
+Respond ONLY as a JSON array of strings, e.g. ["asparagus","spinach","radishes"]. 8 to 14 items. No markdown, no explanation.`;
+  try {
+    const raw = await callAPI([{ role: 'user', content: prompt }], 200);
+    const cleaned = raw.replace(/```json|```/g, '').trim();
+    seasonalVegs = JSON.parse(cleaned);
+  } catch(e) {
+    seasonalVegs = [];
+  }
+  seasonalLoading = false;
+  renderSeasonalPanel();
+}
+
+function renderSeasonalPanel() {
+  const panel = document.getElementById('seasonalPanel');
+  if (!panel) return;
+  const userState = getUserState();
+  const month = new Date().toLocaleString('default', { month: 'long' });
+  if (seasonalLoading) {
+    panel.innerHTML = `<div class="seasonal-panel"><p class="seasonal-loading">Loading seasonal produce for ${userState} in ${month}...</p></div>`;
+    return;
+  }
+  if (!seasonalVegs || seasonalVegs.length === 0) {
+    panel.innerHTML = `<div class="seasonal-panel"><p class="seasonal-loading">${userState ? 'Could not load — check your API key.' : 'Open Settings and pick your state first.'}</p></div>`;
+    return;
+  }
+  const chips = seasonalVegs.map(v => {
+    const inList = state.vegs.includes(v.toLowerCase());
+    const cls = inList ? 'seasonal-chip in-list' : 'seasonal-chip';
+    const title = inList ? 'Already in your list' : 'Click to add to your vegetable list';
+    return `<span class="${cls}" title="${title}" onclick="addSeasonalVeg('${v.toLowerCase().replace(/'/g,"\\'")}',this)">${v}</span>`;
+  }).join('');
+  panel.innerHTML = `<div class="seasonal-panel">
+    <p class="sp-label">In season in ${userState} — ${month}</p>
+    <div class="seasonal-chips">${chips}</div>
+  </div>`;
+}
+
+function addSeasonalVeg(v, el) {
+  if (state.vegs.includes(v)) return;
+  state.vegs.push(v);
+  save();
+  if (el) { el.classList.remove('seasonal-chip'); el.classList.add('seasonal-chip','in-list'); el.title = 'Already in your list'; }
+  render();
+}
+
+let state = loadState();
+let generating = false;
+let regenIdx = null;
+let ingrLoadingIdx = null;
+let instrLoadingIdx = null;
+let statusMsg = '';
+let errorMsg = '';
+let customInstr = {};
+
+function fuzzyMatch(a, b) {
+  const norm = s => s.toLowerCase().trim().replace(/s$/, ''); // strip trailing s for plural
+  return norm(a) === norm(b);
+}
+
+function removeFuzzyMatch(arr, val) {
+  const idx = arr.findIndex(item => fuzzyMatch(item, val));
+  if (idx !== -1) arr.splice(idx, 1);
+}
+
+function addItem(type) {
+  const id = type === 'veg' ? 'vegInput' : type === 'meat' ? 'meatInput' : 'fishInput';
+  const inp = document.getElementById(id);
+  const val = inp.value.trim().toLowerCase();
+  if (!val) return;
+  const arr = type === 'veg' ? state.vegs : type === 'meat' ? state.meats : state.fish;
+  removeFuzzyMatch(arr, val);
+  arr.push(val);
+  inp.value = '';
+  save(); render();
+}
+
+function toggleVeg(v) {
+  if (state.selVegs.includes(v)) { state.selVegs = state.selVegs.filter(x => x !== v); }
+  else { state.selVegs.push(v); }
+  state.plan = []; state.customIngr = {}; state.openCard = null; state.vegNightCustom = null; errorMsg = '';
+  save(); render(); autoGenerate();
+}
+
+function selectMeat(m) {
+  if (!state.selMeats) state.selMeats = state.selMeat ? [state.selMeat] : [];
+  if (state.selMeats.includes(m)) { state.selMeats = state.selMeats.filter(x => x !== m); }
+  else { state.selMeats.push(m); }
+  state.selMeat = state.selMeats[0] || null;
+  state.plan = []; state.customIngr = {}; state.openCard = null; state.vegNightCustom = null; errorMsg = '';
+  save(); render(); autoGenerate();
+}
+
+function selectFish(f) {
+  state.selFish = state.selFish === f ? null : f;
+  state.plan = []; state.customIngr = {}; state.openCard = null; state.vegNightCustom = null; errorMsg = '';
+  save(); render(); autoGenerate();
+}
+
+function removeItem(type, item) {
+  if (type === 'veg') { state.vegs = state.vegs.filter(v => v !== item); state.selVegs = state.selVegs.filter(v => v !== item); }
+  else if (type === 'meat') { state.meats = state.meats.filter(v => v !== item); state.selMeats = (state.selMeats || []).filter(v => v !== item); state.selMeat = (state.selMeats || [])[0] || null; }
+  else { state.fish = state.fish.filter(v => v !== item); if (state.selFish === item) state.selFish = null; }
+  state.plan = []; state.customIngr = {};
+  save(); render();
+}
+
+function toggleVegNight() { state.vegNight = !state.vegNight; save(); render(); }
+
+function toggleOnHand() {
+  state.onHandOpen = !state.onHandOpen;
+  save(); renderOnHand();
+  const track = document.getElementById('onHandTrack');
+  if (track) track.classList.toggle('on', state.onHandOpen);
+  const panel = document.getElementById('onHandPanel');
+  if (panel) panel.style.display = state.onHandOpen ? 'block' : 'none';
+}
+
+function addOnHand() {
+  const inp = document.getElementById('onHandInput');
+  const val = inp ? inp.value.trim() : '';
+  if (!val) return;
+  state.onHand = state.onHand || [];
+  removeFuzzyMatch(state.onHand, val);
+  state.onHand.push(val);
+  inp.value = '';
+  save(); renderOnHand();
+}
+
+function removeOnHand(idx) {
+  state.onHand.splice(idx, 1);
+  save(); renderOnHand();
+}
+
+function renderOnHand() {
+  const el = document.getElementById('onHandList');
+  if (!el) return;
+  const list = state.onHand || [];
+  el.innerHTML = list.length
+    ? list.map((item, i) => `<div class="onhand-item"><span>${item}</span><button class="onhand-rm" onclick="removeOnHand(${i})">Remove</button></div>`).join('')
+    : '';
+}
+
+const VEGLIKE = ['vegetable','herb','fruit','mushroom','pepper','onion','garlic','tomato','carrot','celery','potato','squash','corn','pea','bean','lentil','spinach','kale','chard','cabbage','leek','fennel','radish','turnip','beet','eggplant','artichoke','cucumber','avocado'];
+
+function isVegLike(item) {
+  const lower = item.toLowerCase();
+  return VEGLIKE.some(v => lower.includes(v)) || lower.startsWith('fresh ');
+}
+
+function getOnHandPrompt() {
+  const list = state.onHand || [];
+  if (!state.onHandOpen || !list.length) return '';
+  const vegs = list.filter(isVegLike);
+  const other = list.filter(i => !isVegLike(i));
+  let parts = [];
+  if (vegs.length) parts.push(`Vegetables/produce on hand that MUST appear in at least one meal this week (required — find a natural place for each): ${vegs.join(', ')}.`);
+  if (other.length) parts.push(`Other ingredients on hand to use up — actively try to include each one where it genuinely fits. Do not skip these without good reason. Examples of good fits: sourdough works as a side or base for toast-based meals, a jam or condiment works in a sauce, vinaigrette, or glaze: ${other.join(', ')}.`);
+  return parts.join('\n');
+}
+function toggleCard(idx) {
+  const closing = state.openCard === idx;
+  state.openCard = closing ? null : idx;
+  if (closing) openInstrIdx = null;
+  save(); render();
+  if (state.openCard === idx && state.customIngr[idx] === undefined) loadIngredients(idx);
+}
+
+function isReady() { return state.selVegs.length > 0 && (state.selMeats || [state.selMeat]).filter(Boolean).length > 0 && state.selFish; }
+
+function autoGenerate() {
+  if (!isReady() || generating) return;
+  if (!state.plan || state.plan.length === 0) generatePlan();
+}
+
+async function callAPI(messages, maxTokens) {
+  const key = getKey();
+  if (!key) throw new Error('No API key — enter one above and click Save.');
+  const res = await fetch('https://api.anthropic.com/v1/messages', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'x-api-key': key, 'anthropic-version': '2023-06-01', 'anthropic-dangerous-direct-browser-access': 'true' },
+    body: JSON.stringify({ model: 'claude-sonnet-4-6', max_tokens: maxTokens, messages })
+  });
+  if (!res.ok) {
+    const t = await res.text();
+    throw new Error('API error ' + res.status + ': ' + t.slice(0, 120));
+  }
+  const data = await res.json();
+  return data.content?.find(b => b.type === 'text')?.text || '';
+}
+
+async function generatePlan() {
+  if (generating) return;
+  generating = true; errorMsg = ''; statusMsg = 'Generating your plan...';
+  render();
+  const selMeats = (state.selMeats || [state.selMeat]).filter(Boolean);
+  const anchors = state.selVegs.join(', ');
+  const potatoIsAnchor = state.selVegs.some(v => v.toLowerCase().includes('potato') && !v.toLowerCase().includes('sweet'));
+  const baseRule = `Base/starch rule: meals do not need to include a grain or starch on every night, but at most ONE night in the plan should be base-free (protein and vegetables only with no grain, starch, bread, or noodles). The other three nights should each include a base, and no base should repeat — do not use pasta, noodles, rice, grains, bread, or toast more than once across the plan. ${potatoIsAnchor ? 'Potatoes are an anchor vegetable this week so also avoid using them as a base more than once.' : 'Potatoes are fine as a supporting ingredient on any night and do not count as a base for this rule.'} Plan all 4 nights together with this in mind.`;
+
+  const vegRule = state.selVegs.length > 2
+    ? `Each meal must include at least 2 of the anchor vegetables. All selected vegetables (${anchors}) must appear in at least one meal across the week.`
+    : `Use the anchor vegetables (${anchors}) across the meals, with each appearing in at least one meal.`;
+
+  const meatRule = selMeats.length > 1
+    ? `Weeknight meats: ${selMeats.join(', ')}. Nights 1, 3, and 4 each use exactly ONE of these meats. Distribute them so every selected meat appears in at least one meal. You decide how to split them across nights.`
+    : `Weeknight meat: ${selMeats[0]}`;
+
+  const prompt = `${getRestrictionsPrompt()}
+
+Create a 4-night dinner plan for 2 people.
+Anchor vegetables this week: ${anchors}
+${meatRule}
+Fish for night 2: ${state.selFish}
+${getOnHandPrompt()}
+${vegRule}
+
+Structure:
+- Night 1: sheet pan meal using one of the weeknight meats with anchor vegetables roasted together
+- Night 2: a meal featuring ${state.selFish} where the anchor vegetables appear in a different preparation (raw in salad, wilted, in broth, etc.)
+- Night 3: a quick pantry-style meal (soup, toast, beans, pasta) using a weeknight meat and anchor vegetables a third distinct way — absolutely no egg-based dishes
+- Night 4: a simple pasta, grain bowl, or soup using a weeknight meat and anchor vegetables differently from the other nights
+
+${baseRule}
+
+Each night must use the anchor ingredients in a clearly different preparation and cooking method.
+
+Respond ONLY with a valid JSON array of exactly 4 objects. Format: [{"name":"meal name","tags":["tag1","tag2"]},...]
+Valid tags: sheet, salad, fish, quick, pantry
+No markdown, no explanation, no extra text — raw JSON array only.`;
+
+  try {
+    const raw = await callAPI([{ role: 'user', content: prompt }], 600);
+    const cleaned = raw.replace(/```json|```/g, '').trim();
+    const parsed = JSON.parse(cleaned);
+    const days = ['Night 1', 'Night 2', 'Night 3', 'Night 4'];
+    state.plan = parsed.slice(0, 4).map((m, i) => ({ day: days[i], name: m.name || '', tags: Array.isArray(m.tags) ? m.tags : [] }));
+    state.customIngr = {}; customInstr = {}; errorMsg = '';
+  } catch(e) {
+    errorMsg = e.message;
+    state.plan = [];
+  }
+  generating = false; statusMsg = '';
+  save(); render();
+}
+
+async function regenNight(idx) {
+  if (regenIdx !== null) return;
+  regenIdx = idx; render();
+  const current = state.plan[idx];
+  const others = state.plan.filter((_, i) => i !== idx).map(m => m.name).join('; ');
+  const anchors = state.selVegs.join(' and ');
+  const isNight2 = current.day === 'Night 2';
+  const prompt = `${getRestrictionsPrompt()}
+
+Generate ONE dinner meal for ${current.day} using ${anchors} as anchor vegetable(s).
+${isNight2 ? `Feature ${state.selFish} as the protein.` : `Feature ${state.selMeat} as the protein.`}
+Use the anchor vegetable(s) in a DIFFERENT WAY than these other meals this week: ${others}
+Use a different cooking method and presentation than those meals.
+Respond with ONLY the meal name — no explanation, no punctuation at end, nothing else.`;
+
+  try {
+    const name = (await callAPI([{ role: 'user', content: prompt }], 80)).trim();
+    if (name) {
+      state.plan[idx] = { ...current, name };
+      delete state.customIngr[idx];
+      delete customInstr[idx];
+      if (state.openCard === idx) state.openCard = null;
+    }
+  } catch(e) { errorMsg = e.message; }
+  regenIdx = null; save(); render();
+}
+
+async function regenVegNight() {
+  if (regenIdx !== null) return;
+  regenIdx = 'veg'; render();
+  const anchors = state.selVegs.join(' and ');
+  const prompt = `${getRestrictionsPrompt()}
+
+Generate ONE vegetarian dinner suggestion (no meat, no fish) for 2 people using ${anchors} as the anchor vegetable(s).
+${getOnHandPrompt()}
+It should be satisfying and complete without meat. Vary the approach from a typical pasta or grain bowl if possible.
+
+Respond ONLY as a JSON object: {"name": "meal name", "hint": "one sentence: what to pick up and how to make it (max 25 words)"}
+No markdown, no explanation — raw JSON only.`;
+  try {
+    const raw = await callAPI([{ role: 'user', content: prompt }], 150);
+    const cleaned = raw.replace(/```json|```/g, '').trim();
+    const parsed = JSON.parse(cleaned);
+    state.vegNightCustom = { name: parsed.name || '', hint: parsed.hint || '' };
+    delete state.customIngr['veg'];
+    delete customInstr['veg'];
+    if (state.openCard === 'veg') { state.openCard = null; openInstrIdx = null; }
+  } catch(e) { state.vegNightCustom = null; }
+  regenIdx = null; save(); render();
+}
+
+async function loadIngredients(idx) {
+  ingrLoadingIdx = idx; render();
+  const isVeg = idx === 'veg';
+  const meal = isVeg
+    ? (state.vegNightCustom || vegSuggestions[state.selVegs[0]] || vegSuggestions['default'])
+    : state.plan[idx];
+  const mealName = meal?.name;
+  if (!mealName) { ingrLoadingIdx = null; return; }
+  const prompt = `For this dinner: "${mealName}"
+Anchor vegetables already bought this week: ${state.selVegs.join(', ')}.
+Pantry staples always on hand: ${getPantry().join(", ")}.
+List ONLY the additional ingredients needed to buy. 3 to 6 items max. One per line. No quantities. No bullets or numbers. No intro text. Just the ingredient names.`;
+  try {
+    const text = await callAPI([{ role: 'user', content: prompt }], 150);
+    state.customIngr[idx] = text.trim().split('\n').map(l => l.replace(/^[-•*\d.]+\s*/, '')).filter(l => l.length > 1);
+  } catch(e) {
+    state.customIngr[idx] = ['Could not load — check your API key'];
+  }
+  ingrLoadingIdx = null; save(); render();
+}
+
+let openInstrIdx = null;
+
+function toggleInstructions(idx) {
+  openInstrIdx = openInstrIdx === idx ? null : idx;
+  render();
+  if (openInstrIdx === idx && customInstr[idx] === undefined) loadInstructions(idx);
+}
+
+async function loadInstructions(idx) {
+  instrLoadingIdx = idx; render();
+  const isVeg = idx === 'veg';
+  const isReq = typeof idx === 'string' && idx.startsWith('req-');
+  let mealName = '';
+  if (isVeg) {
+    const s = state.vegNightCustom || vegSuggestions[state.selVegs[0]] || vegSuggestions['default'];
+    mealName = s?.name || '';
+  } else if (isReq) {
+    const reqId = parseInt(idx.replace('req-', ''));
+    const req = (state.requests || []).find(r => r.id === reqId);
+    mealName = req?.name || '';
+  } else {
+    mealName = state.plan[idx]?.name || '';
+  }
+  if (!mealName) { instrLoadingIdx = null; return; }
+  const prompt = `Write quick cooking instructions for: "${mealName}" (serves 2).
+Keep it to 4-6 steps. Each step should be one concise sentence with an approximate time where relevant (e.g. "Roast for 20-25 min until golden").
+No intro, no outro, no ingredient list — just the steps. Number each step.`;
+  try {
+    const text = await callAPI([{ role: 'user', content: prompt }], 300);
+    customInstr[idx] = text.trim().split('\n').map(l => l.replace(/^\d+[\.\)]\s*/, '').trim()).filter(l => l.length > 2);
+  } catch(e) {
+    customInstr[idx] = ['Could not load — check your API key'];
+  }
+  instrLoadingIdx = null; render();
+}
+
+let shoppingList = null;
+let shoppingLoading = false;
+let checkedItems = new Set();
+
+async function generateShoppingList() {
+  if (!state.plan || state.plan.length === 0) { alert('Generate your meal plan first.'); return; }
+  shoppingLoading = true; shoppingList = null; checkedItems = new Set();
+  renderShoppingList();
+  const section = document.getElementById('shoppingSection');
+  if (section) { section.style.display = 'block'; section.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
+
+  const meals = state.plan.map(m => m.name).join(', ');
+  const vegNightMeal = (state.vegNight && (state.vegNightCustom || null));
+  const allMeals = vegNightMeal ? meals + ', ' + vegNightMeal.name : meals;
+  const requests = (state.requests || []).filter(r => !r.loading && r.name).map(r => r.name).join(', ');
+
+  const prompt = `${getRestrictionsPrompt()}
+
+Generate a shopping list for a week of dinners for 2 people. The meals are:
+${allMeals}${requests ? '\nAdditional meal ideas being considered: ' + requests : ''}
+
+Anchor vegetables already on the shopping list (include these in the fresh section): ${state.selVegs.join(', ')}
+Selected meat: ${state.selMeat}
+Selected fish: ${state.selFish}
+${(state.onHand && state.onHandOpen && state.onHand.length) ? 'Already on hand, do NOT include in shopping list: ' + state.onHand.join(', ') : ''}
+
+Pantry staples the household keeps stocked (these go in a separate "pantry check" section — list only the ones actually needed for these meals so they can verify they have enough):
+${getPantry().join(", ")}
+
+Respond ONLY as a JSON object with two arrays:
+- "fresh": items to buy fresh this week (produce, proteins, dairy, bread, specialty items) — include anchor vegetables and proteins, deduplicate across meals, no pantry staples
+- "pantry": only the pantry staples from the list above that are actually called for in these specific meals — so they can check they have enough
+
+Each item should be a plain string, no quantities. Deduplicate across both lists. No markdown, no explanation — raw JSON only.`;
+
+  try {
+    const raw = await callAPI([{ role: 'user', content: prompt }], 600);
+    const cleaned = raw.replace(/```json|```/g, '').trim();
+    shoppingList = JSON.parse(cleaned);
+  } catch(e) {
+    shoppingList = { error: e.message };
+  }
+  shoppingLoading = false;
+  renderShoppingList();
+}
+
+function toggleShoppingItem(key) {
+  if (checkedItems.has(key)) checkedItems.delete(key);
+  else checkedItems.add(key);
+  renderShoppingList();
+}
+
+function renderShoppingList() {
+  const content = document.getElementById('shoppingContent');
+  const section = document.getElementById('shoppingSection');
+  if (!content) return;
+  if (section) section.style.display = (shoppingLoading || shoppingList) ? 'block' : 'none';
+
+  if (shoppingLoading) {
+    content.innerHTML = '<p class="shopping-loading">Building your shopping list...</p>';
+    return;
+  }
+  if (!shoppingList) { content.innerHTML = ''; return; }
+  if (shoppingList.error) {
+    content.innerHTML = `<p class="shopping-loading" style="color:#A32D2D">${shoppingList.error}</p><button class="btn" onclick="generateShoppingList()" style="margin-top:8px">Retry</button>`;
+    return;
+  }
+
+  const fresh = shoppingList.fresh || [];
+  const pantry = shoppingList.pantry || [];
+
+  let html = '';
+
+  if (fresh.length) {
+    html += '<p class="shopping-section-label">Fresh &amp; specialty — buy this week</p>';
+    html += '<ul class="shopping-list">';
+    fresh.forEach((item, i) => {
+      const key = 'f-' + i;
+      html += `<li class="${checkedItems.has(key) ? 'checked' : ''}" onclick="toggleShoppingItem('${key}')">${item}</li>`;
+    });
+    html += '</ul>';
+  }
+
+  if (pantry.length) {
+    html += '<p class="shopping-section-label" style="margin-top:1.25rem">Pantry — check you have enough</p>';
+    html += '<p class="pantry-note">These staples are called for in your meals this week. Tick them off as you verify.</p>';
+    html += '<ul class="shopping-list">';
+    pantry.forEach((item, i) => {
+      const key = 'p-' + i;
+      html += `<li class="${checkedItems.has(key) ? 'checked' : ''}" onclick="toggleShoppingItem('${key}')">${item}</li>`;
+    });
+    html += '</ul>';
+  }
+
+  content.innerHTML = html;
+}
+
+function copyShoppingList() {
+  if (!shoppingList) return;
+  const fresh = (shoppingList.fresh || []);
+  const pantry = (shoppingList.pantry || []);
+  let text = '';
+  if (fresh.length) text += 'FRESH & SPECIALTY\n' + fresh.map(i => '- ' + i).join('\n');
+  if (pantry.length) text += '\n\nPANTRY CHECK\n' + pantry.map(i => '- ' + i).join('\n');
+  navigator.clipboard.writeText(text.trim()).then(() => {
+    const btn = document.querySelector('#shoppingSection .btn:last-child');
+    if (btn) { const prev = btn.textContent; btn.textContent = 'Copied!'; setTimeout(() => { btn.textContent = prev; }, 2000); }
+  }).catch(() => alert('Could not copy — try selecting the list manually.'));
+}
+
+function chipRow(containerId, items, selFn, selCls, onSelect, onRemove) {
+  const el = document.getElementById(containerId);
+  if (!el) return;
+  el.innerHTML = '';
+  items.forEach(item => {
+    const c = document.createElement('span');
+    c.className = 'chip' + (selFn(item) ? ' ' + selCls : '');
+    const label = document.createTextNode(item + ' ');
+    const rm = document.createElement('span');
+    rm.className = 'rm'; rm.setAttribute('aria-label', 'Remove ' + item); rm.textContent = '✕';
+    rm.addEventListener('click', e => { e.stopPropagation(); onRemove(item); });
+    c.appendChild(label); c.appendChild(rm);
+    c.addEventListener('click', () => onSelect(item));
+    el.appendChild(c);
+  });
+}
+
+function renderPlan() {
+  const area = document.getElementById('planArea');
+  if (!area) return;
+
+  if (!isReady()) {
+    area.innerHTML = '<p class="empty-state">Pick at least one vegetable, a meat, and a fish above to generate your week.</p>';
+    return;
+  }
+
+  let html = '<p class="section-label" style="margin-bottom:10px">Your week</p>';
+
+  if (statusMsg) html += `<p class="status">${statusMsg}</p>`;
+  if (errorMsg) html += `<p class="status err">${errorMsg} &nbsp;<button class="btn" onclick="generatePlan()">Retry</button></p>`;
+
+  if (state.vegNight) {
+    const key = state.selVegs[0];
+    const s = state.vegNightCustom || vegSuggestions[key] || vegSuggestions['default'];
+    const isRegenVeg = regenIdx === 'veg';
+    const isVegOpen = state.openCard === 'veg';
+    const vegIngr = state.customIngr['veg'];
+    const vegIngrLoading = ingrLoadingIdx === 'veg';
+    const vegInstrOpen = openInstrIdx === 'veg';
+    const vegInstrLoading = instrLoadingIdx === 'veg';
+    const vegInstr = customInstr['veg'];
+
+    html += `<div class="mcard${isVegOpen ? ' open' : ''}" style="margin-bottom:10px" onclick="toggleCard('veg')">`;
+    html += `<div class="mcard-header"><div style="min-width:0;flex:1">`;
+    html += `<p class="mday" style="color:#3B6D11">Vegetarian night</p>`;
+    html += `<p class="mname">${isRegenVeg ? 'Regenerating...' : s.name}</p></div>`;
+    html += `<button class="regen-btn" onclick="event.stopPropagation();regenVegNight()" aria-label="Regenerate vegetarian night">${isRegenVeg ? '...' : '↻'}</button>`;
+    html += `<button class="save-meal-btn" onclick="event.stopPropagation();openSavePopoverFor('veg','veg',this)" title="Save this meal">★</button></div>`;
+    if (!isRegenVeg && s.hint) html += `<p style="font-size:12px;color:var(--text2);line-height:1.5;margin-bottom:6px">${s.hint}</p>`;
+    html += `<p class="mtap-hint">${isVegOpen ? 'click to close' : 'click for ingredients'}</p>`;
+    if (isVegOpen) {
+      html += `<div class="ingr-panel"><p class="ingr-label">Extra to buy</p>`;
+      if (vegIngrLoading) { html += `<p style="font-size:13px;color:#9c9a94;font-style:italic">Loading...</p>`; }
+      else if (vegIngr && vegIngr.length) { html += `<ul class="ingr-list">${vegIngr.map(it => `<li>${it}</li>`).join('')}</ul>`; }
+      html += `</div>`;
+      html += `<div class="instr-toggle-row">
+        <button class="instr-toggle-btn" onclick="event.stopPropagation();toggleInstructions('veg')">${vegInstrOpen ? 'Hide instructions' : 'Show instructions'}</button>
+      </div>`;
+      if (vegInstrOpen) {
+        html += `<div class="instr-panel">`;
+        if (vegInstrLoading) { html += `<p style="font-size:13px;color:#9c9a94;font-style:italic">Loading...</p>`; }
+        else if (vegInstr && vegInstr.length) { html += `<ol class="instr-list">${vegInstr.map(step => `<li>${step}</li>`).join('')}</ol>`; }
+        html += `</div>`;
+      }
+    }
+    html += `</div>`;
+  }
+
+  if (generating) {
+    html += '<div class="night-grid">';
+    ['Night 1','Night 2','Night 3','Night 4'].forEach(d => {
+      html += `<div class="generating-placeholder"><div class="placeholder-day"></div><div class="placeholder-line"></div><div class="placeholder-line short"></div></div>`;
+    });
+    html += '</div>';
+    area.innerHTML = html; return;
+  }
+
+  if (!state.plan || state.plan.length === 0) {
+    area.innerHTML = html + '<p class="empty-state">No plan yet.</p><div class="action-row"><button class="btn btn-primary" onclick="generatePlan()">Generate plan</button></div>';
+    return;
+  }
+
+  html += '<div class="night-grid">';
+  state.plan.forEach((m, i) => {
+    const isOpen = state.openCard === i;
+    const isRegen = regenIdx === i;
+    const ingr = state.customIngr[i];
+    const ingrLoading = ingrLoadingIdx === i;
+    html += `<div class="mcard${isOpen ? ' open' : ''}" onclick="toggleCard(${i})">`;
+    html += `<div class="mcard-header"><div style="min-width:0;flex:1"><p class="mday">${m.day}</p><p class="mname">${m.name}</p></div>`;
+    html += `<button class="regen-btn" onclick="event.stopPropagation();regenNight(${i})" title="Regenerate this night" aria-label="Regenerate ${m.day}">${isRegen ? '...' : '↻'}</button>`;
+    html += `<button class="save-meal-btn" onclick="event.stopPropagation();openSavePopoverFor('plan',${i},this)" title="Save this meal">★</button></div>`;
+    if (m.tags && m.tags.length) html += `<div class="tags">${m.tags.map(t => `<span class="tag ${tagClass[t] || 't-pantry'}">${tagLabel[t] || t}</span>`).join('')}</div>`;
+    html += `<p class="mtap-hint">${isOpen ? 'click to close' : 'click for ingredients'}</p>`;
+    if (isOpen) {
+      html += `<div class="ingr-panel"><p class="ingr-label">Extra to buy</p>`;
+      if (ingrLoading) { html += `<p style="font-size:13px;color:#9c9a94;font-style:italic">Loading...</p>`; }
+      else if (ingr && ingr.length) { html += `<ul class="ingr-list">${ingr.map(it => `<li>${it}</li>`).join('')}</ul>`; }
+      html += `</div>`;
+
+      const instrOpen = openInstrIdx === i;
+      const instrLoading = instrLoadingIdx === i;
+      const instr = customInstr[i];
+      html += `<div class="instr-toggle-row">
+        <button class="instr-toggle-btn" onclick="event.stopPropagation();toggleInstructions(${i})">${instrOpen ? 'Hide instructions' : 'Show instructions'}</button>
+      </div>`;
+      if (instrOpen) {
+        html += `<div class="instr-panel">`;
+        if (instrLoading) { html += `<p style="font-size:13px;color:#9c9a94;font-style:italic">Loading...</p>`; }
+        else if (instr && instr.length) {
+          html += `<ol class="instr-list">${instr.map(step => `<li>${step}</li>`).join('')}</ol>`;
+        }
+        html += `</div>`;
+      }
+    }
+    html += `</div>`;
+  });
+  html += '</div>';
+  html += `<div class="action-row"><button class="btn" onclick="generatePlan()">Regenerate full plan</button><button class="btn btn-primary" onclick="generateShoppingList()">Generate shopping list</button></div>`;
+  area.innerHTML = html;
+}
+
+async function addMealRequest() {
+  const inp = document.getElementById('requestInput');
+  const craving = inp.value.trim();
+  if (!craving) return;
+  if (!isReady()) { alert('Pick your vegetables, meat, and fish first.'); return; }
+  inp.value = '';
+  const id = Date.now();
+  state.requests = state.requests || [];
+  state.requests.push({ id, craving, loading: true, name: '', desc: '', ingr: [] });
+  save(); renderRequests();
+
+  const anchors = state.selVegs.join(' and ');
+  const prompt = `${getRestrictionsPrompt()}
+
+A home cook is craving: "${craving}"
+Their anchor vegetables this week are: ${anchors}
+Their weeknight meat is: ${state.selMeat}
+Their fish option is: ${state.selFish}
+Pantry staples on hand: ${getPantry().join(", ")}
+${getOnHandPrompt()}
+Create a version of "${craving}" adapted to use the anchor vegetables. It can also use the meat or fish if it makes sense for the dish.
+
+Respond ONLY as a JSON object with these fields:
+- "name": the adapted meal name (be specific, e.g. "Miso ramen with asparagus and chicken")
+- "desc": one sentence describing how the anchor veg is incorporated and what makes this version work (max 20 words)
+- "ingr": array of 3-6 extra ingredients to buy beyond the anchor veg and pantry staples
+
+No markdown, no explanation — raw JSON object only.`;
+
+  try {
+    const raw = await callAPI([{ role: 'user', content: prompt }], 300);
+    const cleaned = raw.replace(/```json|```/g, '').trim();
+    const parsed = JSON.parse(cleaned);
+    const idx = state.requests.findIndex(r => r.id === id);
+    if (idx !== -1) {
+      state.requests[idx] = { id, craving, loading: false, name: parsed.name || craving, desc: parsed.desc || '', ingr: Array.isArray(parsed.ingr) ? parsed.ingr : [] };
+    }
+  } catch(e) {
+    const idx = state.requests.findIndex(r => r.id === id);
+    if (idx !== -1) state.requests[idx] = { id, craving, loading: false, name: craving, desc: 'Could not generate — check your API key.', ingr: [] };
+  }
+  save(); renderRequests();
+}
+
+function removeRequest(id) {
+  state.requests = (state.requests || []).filter(r => r.id !== id);
+  delete customInstr['req-' + id];
+  if (openInstrIdx === 'req-' + id) openInstrIdx = null;
+  save(); renderRequests();
+}
+
+function renderRequests() {
+  const section = document.getElementById('requestSection');
+  const container = document.getElementById('requestCards');
+  if (!section || !container) return;
+  state.requests = state.requests || [];
+  section.style.display = (isReady()) ? 'block' : 'none';
+  if (state.requests.length === 0) { container.innerHTML = ''; return; }
+  container.innerHTML = state.requests.map(r => {
+    if (r.loading) return `<div class="request-card"><p class="request-loading">Generating "${r.craving}"...</p></div>`;
+    const rKey = 'req-' + r.id;
+    const instrOpen = openInstrIdx === rKey;
+    const instrLoading = instrLoadingIdx === rKey;
+    const instr = customInstr[rKey];
+    return `<div class="request-card">
+      <div class="request-card-header">
+        <div style="min-width:0;flex:1">
+          <p class="request-craving">Based on: ${r.craving}</p>
+          <p class="request-name">${r.name}</p>
+          ${r.desc ? `<p class="request-desc">${r.desc}</p>` : ''}
+          ${r.ingr && r.ingr.length ? `<p class="request-ingr-label">Extra to buy</p><ul class="ingr-list">${r.ingr.map(i => `<li>${i}</li>`).join('')}</ul>` : ''}
+          <div class="instr-toggle-row" style="border-top:${r.ingr && r.ingr.length ? '1px solid var(--border)' : 'none'};margin-top:${r.ingr && r.ingr.length ? '10px' : '4px'}">
+            <button class="instr-toggle-btn" onclick="toggleInstructions('${rKey}')">${instrOpen ? 'Hide instructions' : 'Show instructions'}</button>
+          </div>
+          ${instrOpen ? `<div class="instr-panel">${instrLoading ? '<p style="font-size:13px;color:#9c9a94;font-style:italic">Loading...</p>' : instr && instr.length ? `<ol class="instr-list">${instr.map(s => `<li>${s}</li>`).join('')}</ol>` : ''}</div>` : ''}
+        </div>
+        <button class="remove-request" onclick="removeRequest(${r.id})" aria-label="Remove this request">✕</button>
+        <button class="save-meal-btn" onclick="openSavePopoverFor('req',${r.id},this)" title="Save this meal">★</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+let pantrySuggestLoading = false;
+let pantrySuggestData = null;
+let pantrySuggestIngrOpen = false;
+let pantrySuggestIngrLoading = false;
+let pantrySuggestIngr = null;
+let pantrySuggestInstrOpen = false;
+let pantrySuggestInstrLoading = false;
+let pantrySuggestInstr = null;
+let pantrySuggestHistory = []; // array of full suggestion objects
+let openHistoryIdx = null;
+let historyIngrCache = {};
+let historyInstrCache = {};
+let historyIngrLoading = null;
+let historyInstrLoading = null;
+let historyInstrOpen = null;
+
+async function generatePantrySuggestion() {
+  if (pantrySuggestLoading) return;
+
+  // Save current suggestion to history before replacing
+  if (pantrySuggestData && pantrySuggestData.name && !pantrySuggestData.error) {
+    pantrySuggestHistory.push({ ...pantrySuggestData, histId: Date.now() });
+  }
+
+  pantrySuggestLoading = true;
+  pantrySuggestData = null;
+  pantrySuggestIngrOpen = false;
+  pantrySuggestIngr = null;
+  pantrySuggestInstrOpen = false;
+  pantrySuggestInstr = null;
+  renderPantrySuggestion();
+
+  const pantry = getPantry();
+  const onHand = (state.onHandOpen && state.onHand && state.onHand.length) ? state.onHand : [];
+  const allAvailable = [...new Set([...pantry, ...onHand])];
+  const hint = (document.getElementById('pantrySuggestHint') || {}).value?.trim() || '';
+  const historyNames = pantrySuggestHistory.map(h => h.name);
+  const historyNote = historyNames.length
+    ? `\nDo NOT suggest any of these — already shown: ${historyNames.join(', ')}. Vary the dish type, base, and cuisine style significantly from these.`
+    : '';
+  const hintNote = hint ? `\nUser preference for this suggestion: "${hint}".` : '';
+
+  const prompt = `${getRestrictionsPrompt()}
+
+You are helping someone figure out what to cook for dinner using only what they already have at home.
+
+Available ingredients: ${allAvailable.join(', ')}
+${historyNote}${hintNote}
+
+Suggest ONE satisfying dinner for 2 people using ONLY the ingredients listed above. Do not require buying anything extra if at all possible. If you truly cannot make a complete, satisfying meal without one additional item, suggest at most ONE simple, everyday item (e.g. eggs, a lemon, canned tomatoes, bread) — something anyone might already have or that costs almost nothing. Do not suggest specialty or expensive items.
+
+Keep the meal simple and realistic for a weeknight. Prefer meals that are easy and quick. Vary the style from previous suggestions.
+
+IMPORTANT: Every ingredient you mention in the description must also appear in the instructions. Every ingredient in the instructions must be something available or the one extra item. Be consistent throughout.
+
+Respond ONLY as a JSON object:
+{
+  "name": "meal name",
+  "desc": "2 sentences max — what it is and why it works with these ingredients",
+  "used": ["list", "of", "ingredients", "from", "available", "list", "that", "this", "meal", "uses"],
+  "extra": "one simple ingredient to grab if needed, or null if none needed",
+  "extraReason": "why this one item helps, or null"
+}
+No markdown, no explanation — raw JSON only.`;
+
+  try {
+    const raw = await callAPI([{ role: 'user', content: prompt }], 300);
+    const cleaned = raw.replace(/```json|```/g, '').trim();
+    pantrySuggestData = JSON.parse(cleaned);
+  } catch(e) {
+    pantrySuggestData = { error: e.message };
+  }
+  pantrySuggestLoading = false;
+  renderPantrySuggestion();
+}
+
+async function loadPantrySuggestIngr() {
+  if (!pantrySuggestData || pantrySuggestData.error) return;
+  pantrySuggestIngrLoading = true;
+  renderPantrySuggestion();
+  // If the API already returned used ingredients, use them directly
+  if (pantrySuggestData.used && pantrySuggestData.used.length) {
+    pantrySuggestIngr = { used: pantrySuggestData.used, extra: pantrySuggestData.extra || null };
+    pantrySuggestIngrLoading = false;
+    renderPantrySuggestion();
+    return;
+  }
+  // Otherwise ask the AI
+  const pantry = getPantry();
+  const onHand = (state.onHandOpen && state.onHand && state.onHand.length) ? state.onHand : [];
+  const allAvailable = [...new Set([...pantry, ...onHand])];
+  const prompt = `For this meal: "${pantrySuggestData.name}"
+Available ingredients: ${allAvailable.join(', ')}
+List which of the above ingredients this meal actually uses. One per line, no extras, no quantities.`;
+  try {
+    const text = await callAPI([{ role: 'user', content: prompt }], 200);
+    const used = text.trim().split('\n').map(l => l.replace(/^[-•*\d.]+\s*/, '').trim()).filter(l => l.length > 1);
+    pantrySuggestIngr = { used, extra: pantrySuggestData.extra || null };
+  } catch(e) {
+    pantrySuggestIngr = { used: [], extra: pantrySuggestData.extra || null };
+  }
+  pantrySuggestIngrLoading = false;
+  renderPantrySuggestion();
+}
+
+function togglePantrySuggestIngr() {
+  pantrySuggestIngrOpen = !pantrySuggestIngrOpen;
+  renderPantrySuggestion();
+  if (pantrySuggestIngrOpen && !pantrySuggestIngr) loadPantrySuggestIngr();
+}
+
+async function loadPantrySuggestInstr() {
+  if (!pantrySuggestData || pantrySuggestData.error) return;
+  pantrySuggestInstrLoading = true;
+  renderPantrySuggestion();
+  const usedIngr = pantrySuggestIngr ? [...(pantrySuggestIngr.used || []), ...(pantrySuggestIngr.extra ? [pantrySuggestIngr.extra] : [])] : [];
+  const prompt = `Write quick cooking instructions for: "${pantrySuggestData.name}" (serves 2).
+${usedIngr.length ? 'Ingredients being used: ' + usedIngr.join(', ') + '. Only reference these ingredients — do not introduce others.' : ''}
+Keep it to 4-6 steps. Each step should be one concise sentence with an approximate time where relevant.
+No intro, no outro, no ingredient list — just the steps. Number each step.`;
+  try {
+    const text = await callAPI([{ role: 'user', content: prompt }], 300);
+    pantrySuggestInstr = text.trim().split('\n').map(l => l.replace(/^\d+[\.\)]\s*/, '').trim()).filter(l => l.length > 2);
+  } catch(e) {
+    pantrySuggestInstr = ['Could not load instructions.'];
+  }
+  pantrySuggestInstrLoading = false;
+  renderPantrySuggestion();
+}
+
+function togglePantrySuggestInstr() {
+  pantrySuggestInstrOpen = !pantrySuggestInstrOpen;
+  renderPantrySuggestion();
+  if (pantrySuggestInstrOpen && !pantrySuggestInstr) loadPantrySuggestInstr();
+}
+
+function toggleHistoryItem(histId) {
+  openHistoryIdx = openHistoryIdx === histId ? null : histId;
+  historyInstrOpen = null;
+  renderPantrySuggestion();
+  if (openHistoryIdx === histId && historyIngrCache[histId] === undefined) loadHistoryIngr(histId);
+}
+
+function toggleHistoryInstr(histId) {
+  historyInstrOpen = historyInstrOpen === histId ? null : histId;
+  renderPantrySuggestion();
+  if (historyInstrOpen === histId && historyInstrCache[histId] === undefined) loadHistoryInstr(histId);
+}
+
+async function loadHistoryIngr(histId) {
+  historyIngrLoading = histId; renderPantrySuggestion();
+  const item = pantrySuggestHistory.find(h => h.histId === histId);
+  if (!item) { historyIngrLoading = null; return; }
+  const prompt = `For this dinner: "${item.name}"
+Pantry staples always on hand: ${getPantry().join(', ')}.
+Also already on hand: ${(state.onHandOpen && state.onHand && state.onHand.length) ? state.onHand.join(', ') : 'nothing extra'}.
+List ONLY ingredients NOT in either of the above lists that are needed to buy. 3 to 6 items max. One per line. No quantities. No bullets. Just ingredient names.`;
+  try {
+    const text = await callAPI([{ role: 'user', content: prompt }], 150);
+    historyIngrCache[histId] = text.trim().split('\n').map(l => l.replace(/^[-•*\d.]+\s*/, '')).filter(l => l.length > 1);
+  } catch(e) { historyIngrCache[histId] = ['Could not load']; }
+  historyIngrLoading = null; renderPantrySuggestion();
+}
+
+async function loadHistoryInstr(histId) {
+  historyInstrLoading = histId; renderPantrySuggestion();
+  const item = pantrySuggestHistory.find(h => h.histId === histId);
+  if (!item) { historyInstrLoading = null; return; }
+  const prompt = `Write quick cooking instructions for: "${item.name}" (serves 2). 4-6 steps, one concise sentence each with time where relevant. No intro, no outro, no ingredient list. Number each step.`;
+  try {
+    const text = await callAPI([{ role: 'user', content: prompt }], 300);
+    historyInstrCache[histId] = text.trim().split('\n').map(l => l.replace(/^\d+[\.\)]\s*/, '').trim()).filter(l => l.length > 2);
+  } catch(e) { historyInstrCache[histId] = ['Could not load']; }
+  historyInstrLoading = null; renderPantrySuggestion();
+}
+
+function renderPantrySuggestion() {
+  const el = document.getElementById('pantrySuggestResult');
+  const pastEl = document.getElementById('pantrySuggestPastList');
+  const btn = document.getElementById('pantrySuggestBtn');
+  if (!el) return;
+  if (btn) btn.textContent = pantrySuggestLoading ? '...' : pantrySuggestHistory.length > 0 || pantrySuggestData ? 'Try again' : 'Suggest';
+
+  // Show history as clickable pills with expandable detail
+  if (pastEl) {
+    if (pantrySuggestHistory.length) {
+      let histHtml = `<p style="font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px">Already suggested</p>`;
+      histHtml += `<div style="display:flex;flex-direction:column;gap:6px;margin-bottom:12px">`;
+      pantrySuggestHistory.forEach(h => {
+        const isOpen = openHistoryIdx === h.histId;
+        const ingr = historyIngrCache[h.histId];
+        const ingrLoading = historyIngrLoading === h.histId;
+        const instrOpen = historyInstrOpen === h.histId;
+        const instrLoading = historyInstrLoading === h.histId;
+        const instr = historyInstrCache[h.histId];
+        histHtml += `<div style="border:1.5px solid var(--border);border-radius:var(--radius-sm);overflow:hidden;background:var(--surface2)">
+          <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;padding:6px 10px;cursor:pointer" onclick="toggleHistoryItem(${h.histId})">
+            <span style="font-size:12px;font-weight:700;color:var(--text2);text-decoration:line-through;flex:1">${h.name}</span>
+            <div style="display:flex;gap:5px;flex-shrink:0">
+              <button class="save-meal-btn" onclick="event.stopPropagation();saveToSession({name:'${h.name.replace(/'/g,"\\'")}',tags:['pantry']})" title="Save for now">★</button>
+              <button class="save-meal-btn" onclick="event.stopPropagation();saveToFavorites({name:'${h.name.replace(/'/g,"\\'")}',tags:['pantry']})" title="Save as favorite" style="color:#5A4A00;background:#FFF3C0;border-color:#B89A00">♥</button>
+              <span style="font-size:12px;color:var(--text3);font-weight:700">${isOpen ? '▲' : '▼'}</span>
+            </div>
+          </div>
+          ${isOpen ? `<div style="padding:10px;border-top:1.5px dashed var(--border)">
+            ${h.desc ? `<p style="font-size:12px;font-weight:600;color:var(--text2);margin-bottom:8px;line-height:1.5">${h.desc}</p>` : ''}
+            ${h.extra ? `<p style="font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;color:var(--yellow-dark);margin-bottom:3px">One thing to grab</p><span style="font-size:12px;font-weight:700;color:var(--text);background:#FFF3C0;border:1.5px solid var(--yellow-dark);border-radius:var(--radius-sm);padding:3px 8px;display:inline-block;margin-bottom:8px">${h.extra}${h.extraReason ? ' — ' + h.extraReason : ''}</span>` : ''}
+            <p style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--purple);margin-bottom:4px">Extra to buy</p>
+            ${ingrLoading ? '<p style="font-size:12px;color:var(--text3);font-style:italic">Loading...</p>'
+              : ingr && ingr.length ? `<ul class="ingr-list" style="font-size:12px;margin-bottom:8px">${ingr.map(i=>`<li>${i}</li>`).join('')}</ul>`
+              : '<p style="font-size:12px;color:var(--text3);font-style:italic">Loading...</p>'}
+            <button class="instr-toggle-btn" style="font-size:11px;padding:2px 9px" onclick="toggleHistoryInstr(${h.histId})">${instrOpen ? 'Hide instructions' : 'Show instructions'}</button>
+            ${instrOpen ? `<div class="instr-panel">${instrLoading ? '<p style="font-size:12px;color:var(--text3);font-style:italic">Loading...</p>' : instr && instr.length ? `<ol class="instr-list" style="font-size:12px">${instr.map(s=>`<li>${s}</li>`).join('')}</ol>` : ''}</div>` : ''}
+          </div>` : ''}
+        </div>`;
+      });
+      histHtml += `</div>`;
+      pastEl.innerHTML = histHtml;
+    } else {
+      pastEl.innerHTML = '';
+    }
+  }
+
+  if (pantrySuggestLoading) {
+    el.innerHTML = '<p style="font-size:13px;color:var(--text2);font-style:italic;padding:.5rem 0">Finding something to make...</p>';
+    return;
+  }
+  if (!pantrySuggestData) { el.innerHTML = ''; return; }
+  if (pantrySuggestData.error) {
+    el.innerHTML = `<p style="font-size:13px;color:#A32D2D">${pantrySuggestData.error}</p>`;
+    return;
+  }
+
+  const d = pantrySuggestData;
+  // Pre-populate ingr from used field if available
+  if (d.used && !pantrySuggestIngr) pantrySuggestIngr = { used: d.used, extra: d.extra || null };
+  let html = `<div class="pantry-suggest-card">`;
+  html += `<div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px;margin-bottom:5px">`;
+  html += `<p class="pantry-suggest-name">${d.name}</p>`;
+  html += `<button class="save-meal-btn" onclick="openSavePopoverFor('pantry','pantry',this)" title="Save this meal">★</button></div>`;
+  if (d.desc) html += `<p class="pantry-suggest-desc">${d.desc}</p>`;
+  // Ingredients section
+  html += `<div class="instr-toggle-row" style="margin-top:10px;border-top:1px solid var(--border);padding-top:8px;display:flex;gap:8px;flex-wrap:wrap">`;
+  html += `<button class="instr-toggle-btn" onclick="togglePantrySuggestIngr()">${pantrySuggestIngrOpen ? 'Hide ingredients' : 'Show ingredients'}</button>`;
+  html += `<button class="instr-toggle-btn" onclick="togglePantrySuggestInstr()">${pantrySuggestInstrOpen ? 'Hide instructions' : 'Show instructions'}</button>`;
+  html += `</div>`;
+  if (pantrySuggestIngrOpen) {
+    html += `<div class="instr-panel">`;
+    if (pantrySuggestIngrLoading) {
+      html += `<p style="font-size:13px;color:#9c9a94;font-style:italic">Loading...</p>`;
+    } else if (pantrySuggestIngr) {
+      if (pantrySuggestIngr.used && pantrySuggestIngr.used.length) {
+        html += `<p class="ingr-label" style="margin-bottom:6px">From your pantry/on-hand</p>`;
+        html += `<ul class="ingr-list" style="margin-bottom:10px">${pantrySuggestIngr.used.map(i => `<li>${i}</li>`).join('')}</ul>`;
+      }
+      if (pantrySuggestIngr.extra) {
+        html += `<p class="pantry-suggest-extra">One thing to grab</p>`;
+        html += `<span class="pantry-suggest-extra-item">${pantrySuggestIngr.extra}${d.extraReason ? ' — ' + d.extraReason : ''}</span>`;
+      } else {
+        html += `<p style="font-size:12px;font-weight:600;color:var(--teal-dark)">✓ No extra shopping needed</p>`;
+      }
+    }
+    html += `</div>`;
+  }
+  if (pantrySuggestInstrOpen) {
+    html += `<div class="instr-panel" style="margin-top:10px;padding-top:8px;border-top:1px dashed var(--border)">`;
+    if (pantrySuggestInstrLoading) html += `<p style="font-size:13px;color:#9c9a94;font-style:italic">Loading...</p>`;
+    else if (pantrySuggestInstr && pantrySuggestInstr.length) html += `<ol class="instr-list">${pantrySuggestInstr.map(s => `<li>${s}</li>`).join('')}</ol>`;
+    html += `</div>`;
+  }
+  html += `</div>`;
+  el.innerHTML = html;
+}
+
+function render() {
+  chipRow('vegChips', state.vegs, v => state.selVegs.includes(v), 'sel-veg', toggleVeg, item => removeItem('veg', item));
+  chipRow('meatChips', state.meats, m => (state.selMeats || (state.selMeat ? [state.selMeat] : [])).includes(m), 'sel-meat', selectMeat, item => removeItem('meat', item));
+  chipRow('fishChips', state.fish, f => state.selFish === f, 'sel-fish', selectFish, item => removeItem('fish', item));
+  const track = document.getElementById('vegTrack');
+  if (track) track.classList.toggle('on', !!state.vegNight);
+  const onHandTrack = document.getElementById('onHandTrack');
+  if (onHandTrack) onHandTrack.classList.toggle('on', !!state.onHandOpen);
+  const onHandPanel = document.getElementById('onHandPanel');
+  if (onHandPanel) onHandPanel.style.display = state.onHandOpen ? 'block' : 'none';
+  renderOnHand();
+  renderPlan();
+  renderRequests();
+}
+
+['vegInput','meatInput','fishInput'].forEach(id => {
+  const el = document.getElementById(id);
+  if (el) el.addEventListener('keydown', e => {
+    if (e.key === 'Enter') addItem(id === 'vegInput' ? 'veg' : id === 'meatInput' ? 'meat' : 'fish');
+  });
+});
+
+const reqInp = document.getElementById('requestInput');
+if (reqInp) reqInp.addEventListener('keydown', e => { if (e.key === 'Enter') addMealRequest(); });
+
+const ohInp = document.getElementById('onHandInput');
+if (ohInp) ohInp.addEventListener('keydown', e => { if (e.key === 'Enter') addOnHand(); });
+
+const pantryInp = document.getElementById('newPantryInput');
+if (pantryInp) pantryInp.addEventListener('keydown', e => { if (e.key === 'Enter') addPantryItem(); });
+
+const restrictInp = document.getElementById('newRestrictionInput');
+if (restrictInp) restrictInp.addEventListener('keydown', e => { if (e.key === 'Enter') addRestriction(); });
+
+const pantryHintInp = document.getElementById('pantrySuggestHint');
+if (pantryHintInp) pantryHintInp.addEventListener('keydown', e => { if (e.key === 'Enter') generatePantrySuggestion(); });
+
+render();
+renderPantryFooter();
+renderDrawer();
+if (isReady() && (!state.plan || state.plan.length === 0)) autoGenerate();
+</script>
+</body>
+</html>
